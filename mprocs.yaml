@@ -1,0 +1,3 @@
+procs:
+  front_end:
+    shell: "cd front_end && bun --bun run dev"
