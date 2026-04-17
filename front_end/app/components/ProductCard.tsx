@@ -1,6 +1,6 @@
 import Image from "next/image";
 import dogImage from "../fixtures/dog.jpg";
-import type { Product } from "./types";
+import { Product } from "@plum/types";
 
 interface Props {
   product: Product;
@@ -27,8 +27,12 @@ export default function ProductCard({ product }: Props) {
         </div>
 
         <div className="flex-1">
-          <h3 className="text-base font-semibold text-gray-900">{product.name}</h3>
-          <p className="mt-1 line-clamp-2 text-sm text-gray-500">{product.description}</p>
+          <h3 className="text-base font-semibold text-gray-900">
+            {product.name}
+          </h3>
+          <p className="mt-1 line-clamp-2 text-sm text-gray-500">
+            {product.description}
+          </p>
         </div>
 
         <a

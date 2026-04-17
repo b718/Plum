@@ -6,3 +6,7 @@ export interface Product {
   tag: string;
   url: string;
 }
+
+export interface SearchQuery {
+  text: string;
+}

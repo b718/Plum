@@ -1,24 +1,36 @@
 "use client";
 
 import { useState } from "react";
+import type { SearchQuery } from "@plum/types";
+import { serverUrl } from "../utilities/api";
 
 export default function ChatBox() {
-  const [value, setValue] = useState("");
+  const [searchText, setSearchText] = useState("");
+
+  async function handleSearch() {
+    const body: SearchQuery = { text: searchText };
+    await fetch(`${serverUrl}/query`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    setSearchText("");
+  }
 
   return (
     <div className="w-full max-w-2xl">
       <div className="flex items-center gap-3 rounded-full border border-gray-200 bg-white px-5 py-3 shadow-sm focus-within:ring-2 focus-within:ring-black/10">
         <input
           type="text"
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
           placeholder="What are you looking for?"
           className="flex-1 bg-transparent text-sm outline-none placeholder:text-gray-400"
         />
         <button
-          onClick={() => setValue("")}
+          onClick={handleSearch}
           className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-black text-white transition-opacity hover:opacity-80 disabled:opacity-30"
-          disabled={!value.trim()}
+          disabled={!searchText.trim()}
           aria-label="Send"
         >
           <svg
