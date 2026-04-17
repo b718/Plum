@@ -3,4 +3,8 @@ default:
 
 # Create a new Bun package
 create-package:
-    @ cd scripts && python3 create_package.py
+    @cd scripts && python3 create_package.py
+
+# Start Plum
+start:
+    @mprocs
