@@ -1,0 +1,9 @@
+{
+  "name": "plum",
+  "private": true,
+  "workspaces": [
+    "front_end",
+    "back_end",
+    "packages/*"
+  ]
+}

@@ -8,5 +8,9 @@
   },
   "peerDependencies": {
     "typescript": "^5"
+  },
+  "dependencies": {
+    "@qdrant/js-client-rest": "^1.17.0",
+    "@plum/types": "workspace:*"
   }
 }
