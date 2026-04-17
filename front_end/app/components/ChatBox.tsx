@@ -1,19 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import type { SearchQuery } from "@plum/types";
-import { serverUrl } from "../utilities/api";
+import { useSearch } from "../context/SearchContext";
 
 export default function ChatBox() {
   const [searchText, setSearchText] = useState("");
+  const { handleSearch } = useSearch();
 
-  async function handleSearch() {
-    const body: SearchQuery = { text: searchText };
-    await fetch(`${serverUrl}/query`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
+  function onSubmit() {
+    handleSearch(searchText);
     setSearchText("");
   }
 
@@ -28,7 +23,7 @@ export default function ChatBox() {
           className="flex-1 bg-transparent text-sm outline-none placeholder:text-gray-400"
         />
         <button
-          onClick={handleSearch}
+          onClick={onSubmit}
           className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-black text-white transition-opacity hover:opacity-80 disabled:opacity-30"
           disabled={!searchText.trim()}
           aria-label="Send"
