@@ -10,7 +10,7 @@ function main() {
 
   server.get("/", (c) => c.json("hello world"));
   server.get("/products", productsHandler);
-  server.post("/query", queryHandler);
+  server.post("/query", queryHandler());
 
   logger.info(`Server starting at port: ${serverPort}`);
   Bun.serve({ fetch: server.fetch, port: 3003 });

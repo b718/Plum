@@ -10,3 +10,8 @@ export interface Product {
 export interface SearchQuery {
   text: string;
 }
+
+export interface ServerFailureResponse {
+  statusCode: number;
+  errorMessage: string;
+}
