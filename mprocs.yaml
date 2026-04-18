@@ -2,4 +2,4 @@ procs:
   front_end:
     shell: "cd front_end && bun --bun run dev"
   back_end:
-    shell: "cd back_end && bun run dev"
+    shell: "cd back_end && just set-up-local-dev"

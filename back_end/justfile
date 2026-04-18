@@ -1,0 +1,14 @@
+mod database './justfiles/database.just'
+mod cache './justfiles/cache.just'
+
+# List everything
+default:
+    @just --list
+
+# Set-up local instance of Plum
+set-up-local-dev:
+    @just database start-database
+    @just cache start-cache
+    @sleep 1
+    @bun ./seed/seed.ts
+    @bun run dev
