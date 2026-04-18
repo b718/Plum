@@ -1,8 +1,13 @@
-import type { Context } from "hono";
-import type { SearchQuery, ServerFailureResponse } from "@plum/types";
 import type { Queue } from "bullmq";
+import type { Context } from "hono";
 import { StatusCodes } from "http-status-codes";
 import pino from "pino";
+
+import type {
+  ResultsQuery,
+  SearchQuery,
+  ServerFailureResponse,
+} from "@plum/types";
 
 export default function queryHandler(queue: Queue) {
   const logger = pino({ name: __filename });
@@ -19,8 +24,11 @@ export default function queryHandler(queue: Queue) {
       }
 
       const job = await queue.add("search", { text: body.text });
-      logger.info({ jobId: job.id }, "enqueued search job");
-      return c.json({ jobId: job.id }, StatusCodes.ACCEPTED);
+      const response: ResultsQuery = {
+        jobId: job.id,
+      };
+      logger.info({ jobId: response.jobId }, "enqueued search job");
+      return c.json(response, StatusCodes.ACCEPTED);
     } catch {
       return c.json(
         { error: "Internal server error" },
