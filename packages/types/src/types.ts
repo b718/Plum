@@ -3,12 +3,15 @@ export interface Product {
   name: string;
   description: string;
   category: string;
-  tag: string;
   url: string;
 }
 
 export interface SearchQuery {
   text: string;
+}
+
+export interface ResultsQuery {
+  jobId: string | undefined;
 }
 
 export interface ServerFailureResponse {
