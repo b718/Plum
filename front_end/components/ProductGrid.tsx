@@ -1,11 +1,13 @@
-"use client";
-
+import type { Product } from "@plum/types";
 import ProductCard from "./ProductCard";
-import { useSearch } from "./context/SearchContext";
 
-export default function ProductGrid() {
-  const { queryProducts, loading, error } = useSearch();
+interface Props {
+  products: Product[];
+  loading: boolean;
+  error: string | null;
+}
 
+export default function ProductGrid({ products, loading, error }: Props) {
   if (loading) {
     return (
       <section className="w-full max-w-5xl flex flex-col items-center gap-3 py-16 text-gray-500">
@@ -28,7 +30,7 @@ export default function ProductGrid() {
   return (
     <section className="w-full max-w-5xl">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {queryProducts.map((product) => (
+        {products.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
       </div>
