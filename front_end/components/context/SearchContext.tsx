@@ -1,7 +1,10 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
+
 import type { Product, ServerFailureResponse } from "@plum/types";
+
 import { serverUrl } from "../../utilities/api";
 
 interface SearchContextValue {
@@ -13,7 +16,8 @@ interface SearchContextValue {
 
 const SearchContext = createContext<SearchContextValue | null>(null);
 
-export function SearchProvider({ children }: { children: React.ReactNode }) {
+function useSearchState() {
+  const router = useRouter();
   const [queryProducts, setQueryProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -21,19 +25,38 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
   async function runQuery(url: string, init?: RequestInit) {
     setLoading(true);
     setError(null);
-
     try {
       const [res] = await Promise.all([
         fetch(url, init),
         addArtificialDelay(500),
       ]);
-
       if (!res.ok) {
         const data: ServerFailureResponse = await res.json();
         throw new Error(data.errorMessage ?? `Request failed (${res.status})`);
       }
-
       setQueryProducts(await res.json());
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleSearch(text: string) {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`${serverUrl}/query`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text }),
+      });
+      if (!res.ok) {
+        const data: ServerFailureResponse = await res.json();
+        throw new Error(data.errorMessage ?? `Request failed (${res.status})`);
+      }
+      const { jobId } = await res.json();
+      router.push(`/results/${jobId}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
@@ -45,20 +68,13 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
     runQuery(`${serverUrl}/products`);
   }, []);
 
-  async function handleSearch(text: string) {
-    await runQuery(`${serverUrl}/query`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text }),
-    });
-  }
+  return { queryProducts, loading, error, handleSearch };
+}
 
+export function SearchProvider({ children }: { children: React.ReactNode }) {
+  const state = useSearchState();
   return (
-    <SearchContext.Provider
-      value={{ queryProducts, loading, error, handleSearch }}
-    >
-      {children}
-    </SearchContext.Provider>
+    <SearchContext.Provider value={state}>{children}</SearchContext.Provider>
   );
 }
 
