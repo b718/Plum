@@ -1,10 +1,10 @@
 import type { Context } from "hono";
-import type { SearchQuery, Product, ServerFailureResponse } from "@plum/types";
-import pino from "pino";
-import products from "../get/fixture.json";
+import type { SearchQuery, ServerFailureResponse } from "@plum/types";
+import type { Queue } from "bullmq";
 import { StatusCodes } from "http-status-codes";
+import pino from "pino";
 
-export default function queryHandler() {
+export default function queryHandler(queue: Queue) {
   const logger = pino({ name: __filename });
 
   return async (c: Context) => {
@@ -18,10 +18,14 @@ export default function queryHandler() {
         return c.json(response, StatusCodes.BAD_REQUEST);
       }
 
-      logger.info({ body });
-      return c.json(products as Product[], 200);
+      const job = await queue.add("search", { text: body.text });
+      logger.info({ jobId: job.id }, "enqueued search job");
+      return c.json({ jobId: job.id }, StatusCodes.ACCEPTED);
     } catch {
-      return c.json({ error: "Internal server error" }, 500);
+      return c.json(
+        { error: "Internal server error" },
+        StatusCodes.INTERNAL_SERVER_ERROR,
+      );
     }
   };
 }
