@@ -1,4 +1,5 @@
 import type { Product } from "@plum/types";
+
 import ProductCard from "./ProductCard";
 
 interface Props {

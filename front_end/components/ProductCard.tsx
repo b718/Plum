@@ -1,6 +1,8 @@
 import Image from "next/image";
-import dogImage from "../fixtures/dog.jpg";
+
 import { Product } from "@plum/types";
+
+import dogImage from "../fixtures/dog.jpg";
 
 interface Props {
   product: Product;
