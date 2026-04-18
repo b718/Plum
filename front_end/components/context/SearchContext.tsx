@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import type { Product, ServerFailureResponse } from "@plum/types";
-import { serverUrl } from "../utilities/api";
+import { serverUrl } from "../../utilities/api";
 
 interface SearchContextValue {
   queryProducts: Product[];

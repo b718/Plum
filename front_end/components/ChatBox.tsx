@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useSearch } from "../context/SearchContext";
+import { useSearch } from "./context/SearchContext";
 
 export default function ChatBox() {
   const [searchText, setSearchText] = useState("");

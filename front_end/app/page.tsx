@@ -1,6 +1,6 @@
-import ChatBox from "./components/ChatBox";
-import ProductGrid from "./components/ProductGrid";
-import { SearchProvider } from "./context/SearchContext";
+import ChatBox from "../components/ChatBox";
+import ProductGrid from "../components/ProductGrid";
+import { SearchProvider } from "../components/context/SearchContext";
 
 export default function Home() {
   return (

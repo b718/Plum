@@ -23,7 +23,6 @@ export default function ProductCard({ product }: Props) {
           <span className="inline-block rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600">
             {product.category}
           </span>
-          <span className="text-xs text-gray-400">{product.tag}</span>
         </div>
 
         <div className="flex-1">

@@ -1,7 +1,7 @@
 "use client";
 
 import ProductCard from "./ProductCard";
-import { useSearch } from "../context/SearchContext";
+import { useSearch } from "./context/SearchContext";
 
 export default function ProductGrid() {
   const { queryProducts, loading, error } = useSearch();
