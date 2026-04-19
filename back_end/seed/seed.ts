@@ -1,26 +1,39 @@
 import { QdrantClient } from "@qdrant/js-client-rest";
 import pino from "pino";
 
+import fixtures from "../fixtures/fixture.json";
+import { VECTOR_OUTPUT_SIZE } from "../modules/embed/const";
+
+function randomVector(): number[] {
+	return Array.from({ length: VECTOR_OUTPUT_SIZE }, () => Math.random());
+}
+
 async function seedDatabase() {
-  const logger = pino({ name: __filename });
-  const client = new QdrantClient({ host: "localhost", port: 6333 });
-  const COLLECTION = "products";
-  const VECTOR_SIZE = 4;
+	const logger = pino({ name: __filename });
+	const client = new QdrantClient({ host: "localhost", port: 6333 });
+	const COLLECTION = "products";
 
-  await client.createCollection(COLLECTION, {
-    vectors: { size: VECTOR_SIZE, distance: "Cosine" },
-  });
-  logger.info(`created collection "${COLLECTION}"`);
+	await client.createCollection(COLLECTION, {
+		vectors: { size: VECTOR_OUTPUT_SIZE, distance: "Cosine" },
+	});
+	logger.info(`created collection "${COLLECTION}"`);
 
-  await client.upsert(COLLECTION, {
-    points: [
-      { id: 1, vector: [0.1, 0.2, 0.3, 0.4], payload: { label: "apple" } },
-      { id: 2, vector: [0.9, 0.8, 0.7, 0.6], payload: { label: "orange" } },
-      { id: 3, vector: [0.1, 0.25, 0.35, 0.45], payload: { label: "pear" } },
-    ],
-  });
+	await client.upsert(COLLECTION, {
+		points: fixtures.map((item) => ({
+			id: parseInt(item.id),
+			vector: randomVector(),
+			payload: {
+				id: item.id,
+				name: item.name,
+				description: item.description,
+				category: item.category,
+				tag: item.tag,
+				url: item.url,
+			},
+		})),
+	});
 
-  logger.info("inserted 3 points");
+	logger.info(`inserted ${fixtures.length} points`);
 }
 
 seedDatabase();
