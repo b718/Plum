@@ -4,7 +4,7 @@ import type { GenerativeModel as Client } from "@google/generative-ai";
 import { ErrorTransform } from "../error/errorTransform";
 import type { Transformer } from "./transformer";
 
-const MODEL_NAME = "gemini-2.5-flash-lite";
+const MODEL_NAME = "gemini-3.1-flash-lite-preview";
 
 export class TransformerGoogle implements Transformer {
 	readonly transformerType = "gemini";
