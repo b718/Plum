@@ -1,4 +1,5 @@
-import { GenerativeModel, GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import type { GenerativeModel as Client } from "@google/generative-ai";
 
 import type { Transformer } from "./transformer";
 
@@ -6,7 +7,7 @@ const MODEL_NAME = "gemini-2.5-flash-lite";
 
 export class TransformerGoogle implements Transformer {
 	readonly transformerType = "gemini";
-	private client: GenerativeModel;
+	private client: Client;
 
 	constructor() {
 		this.client = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!).getGenerativeModel({
