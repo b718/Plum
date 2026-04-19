@@ -13,10 +13,13 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@plum/types": "workspace:*",
     "@qdrant/js-client-rest": "^1.17.0",
+    "bullmq": "^5.74.1",
     "hono": "^4.12.14",
     "http-status-codes": "^2.3.0",
+    "ioredis": "^5.10.1",
     "pino": "^10.3.1"
   }
 }
