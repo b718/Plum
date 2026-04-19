@@ -1,4 +1,4 @@
 export interface Transformer {
 	readonly transformerType: string;
-	transformUserInput(query: string): Promise<string>;
+	transformUserInput(userInput: string): Promise<string>;
 }

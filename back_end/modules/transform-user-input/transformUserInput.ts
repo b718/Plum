@@ -4,10 +4,10 @@ import type { Transformer } from "./transformer";
 
 const logger = pino({ name: __filename });
 
-export async function transformUserInput(transformer: Transformer, input: string): Promise<string> {
+export async function transformUserInput(transformer: Transformer, userInput: string): Promise<string> {
 	logger.info(
-		{ userInput: input, transformerType: transformer.transformerType },
+		{ userInput: userInput, transformerType: transformer.transformerType },
 		"transforming user input",
 	);
-	return transformer.transformUserInput(input);
+	return transformer.transformUserInput(userInput);
 }

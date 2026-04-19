@@ -1,12 +1,14 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import type { GenerativeModel as Client } from "@google/generative-ai";
 
+import { ErrorTransform } from "../error/errorTransform";
 import type { Transformer } from "./transformer";
 
 const MODEL_NAME = "gemini-2.5-flash-lite";
 
 export class TransformerGoogle implements Transformer {
 	readonly transformerType = "gemini";
+
 	private client: Client;
 
 	constructor() {
@@ -15,15 +17,19 @@ export class TransformerGoogle implements Transformer {
 		});
 	}
 
-	async transformUserInput(input: string): Promise<string> {
-		const transformedUserInput = await this.client.generateContent(this.createPrompt(input));
-		return transformedUserInput.response.text().trim();
+	async transformUserInput(userInput: string): Promise<string> {
+		try {
+			const transformedUserInput = await this.client.generateContent(this.createPrompt(userInput));
+			return transformedUserInput.response.text().trim();
+		} catch (error) {
+			throw new ErrorTransform(error);
+		}
 	}
 
-	createPrompt(input: string): string {
+	createPrompt(userInput: string): string {
 		return `
         You are a search query optimizer for an e-commerce product search engine. 
         Extract the core product search intent from the user's input and return ONLY a concise keyword string — no explanation, no punctuation, no extra words.
-        Input: "${input}"`;
+        Input: "${userInput}"`;
 	}
 }
