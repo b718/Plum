@@ -2,7 +2,7 @@ import type { Job } from "bullmq";
 import type Redis from "ioredis";
 import type { Logger } from "pino";
 
-import type { Product } from "@plum/types";
+import type { Product, SearchQuery } from "@plum/types";
 
 import { embedUserInput } from "../embed-user-input/embedUserInput";
 import { queryDatabase } from "../query/queryDatabase";
@@ -11,10 +11,11 @@ import { transformUserInput } from "../transform-user-input/transformUserInput";
 export default async function processJob(
   id: number,
   logger: Logger,
-  job: Job<any, any, string>,
+  job: Job<SearchQuery, any, string>,
   publisher: Redis,
 ) {
-  const transformedUserInput = await transformUserInput(job.data);
+  const userInput = job.data.text;
+  const transformedUserInput = await transformUserInput(userInput);
   const embededUserInput = await embedUserInput(transformedUserInput);
   const queriedProducts = await queryDatabase(embededUserInput);
   logger.info(
