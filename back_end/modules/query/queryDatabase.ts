@@ -1,8 +1,15 @@
+import pino from "pino";
+
 import type { Product } from "@plum/types";
 
-import fixtures from "../../fixtures/fixture.json";
+import type { Querier } from "./querier";
 
-export async function queryDatabase(_embedding: number[]): Promise<Product[]> {
-  // mock: real impl would vector-search Qdrant
-  return fixtures as Product[];
+const logger = pino({ name: __filename });
+
+export async function queryDatabase(querier: Querier, embededUserInput: number[]): Promise<Product[]> {
+	logger.info(
+		{ embededUserInputLength: embededUserInput.length, querierType: querier.querierType },
+		"querying database with embeded user input",
+	);
+	return querier.query(embededUserInput);
 }
