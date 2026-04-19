@@ -1,9 +1,12 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import pino from "pino";
 
+const logger = pino({ name: __filename });
 let model: ReturnType<GoogleGenerativeAI["getGenerativeModel"]> | null = null;
 
 //@TODO: MAKE THIS MORE GENERIC IN THE FUTURE IE A SUPERCLASS
 export async function transformUserInput(input: string): Promise<string> {
+  logger.info({ userInput: input }, "transforming user input");
   const result = await getModel().generateContent(createPrompt(input));
   return result.response.text().trim();
 }
