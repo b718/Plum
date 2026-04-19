@@ -40,8 +40,7 @@ export default function resultsHandler() {
 					}
 				});
 
-				subscriber.on("message", (ch, message) => {
-					if (ch !== channel) return;
+				subscriber.on("message", (_, message) => {
 					controller.enqueue(encoder.encode(`data: ${message}\n\n`));
 					controller.close();
 					subscriber.disconnect();
