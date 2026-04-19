@@ -1,0 +1,7 @@
+node_modules
+.next
+build
+out
+front_end/node_modules
+back_end/node_modules
+packages/*/node_modules
