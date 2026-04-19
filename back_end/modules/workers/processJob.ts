@@ -14,15 +14,19 @@ export default async function processJob(
   job: Job<SearchQuery, any, string>,
   publisher: Redis,
 ) {
-  const userInput = job.data.text;
-  const transformedUserInput = await transformUserInput(userInput);
-  const embededUserInput = await embedUserInput(transformedUserInput);
-  const queriedProducts = await queryDatabase(embededUserInput);
-  logger.info(
-    { worker: id, jobId: job.id, resultCount: queriedProducts.length },
-    "job processed",
-  );
-  await cacheAndPublishResults(job.id, publisher, queriedProducts);
+  try {
+    const userInput = job.data.text;
+    const transformedUserInput = await transformUserInput(userInput);
+    const embededUserInput = await embedUserInput(transformedUserInput);
+    const queriedProducts = await queryDatabase(embededUserInput);
+    logger.info(
+      { worker: id, jobId: job.id, resultCount: queriedProducts.length },
+      "job processed",
+    );
+    await cacheAndPublishResults(job.id, publisher, queriedProducts);
+  } catch (error) {
+    logger.error({ err: error }, "error processing job");
+  }
 }
 
 async function cacheAndPublishResults(
