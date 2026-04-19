@@ -1,10 +1,6 @@
 ## Plum
 
-I've always been fascinated by how powerful natural language is as an interface. The idea that you can just describe what you want — in plain English, the way you'd tell a friend — and have a system understand your intent, search for the right results, and take action on your behalf feels like a genuinely new way to interact with software. That's what drew me to explore agentic commerce.
-
-Plum is my attempt to dig into that space. Rather than navigating menus and filters, users can describe what they're looking for naturally, and the system uses a combination of LLMs and vector search to interpret that intent and surface the right results. The goal was to understand how far you can push natural language as the primary interface for a commerce-like experience.
-
-The project is still in-progress but I wanted to share my current progress.
+The future of commerce is going to be led by natural language and I wanted to see what that is like.Plum is my attempt to dig into that space. Rather than navigating menus and filters, users can describe what they're looking for naturally, and the system uses a combination of LLMs and vector search to interpret that intent and surface the right results. The goal was to understand how far you can push natural language as the primary interface for a commerce-like experience. The project is still in-progress but I wanted to share my current progress.
 
 ## Tech Stack
 
