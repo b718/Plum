@@ -1,20 +1,20 @@
 export interface Product {
-  id: string;
-  name: string;
-  description: string;
-  category: string;
-  url: string;
+	id: string;
+	name: string;
+	description: string;
+	category: string;
+	url: string;
 }
 
 export interface SearchQuery {
-  text: string;
+	text: string;
 }
 
 export interface ResultsQuery {
-  jobId: string | undefined;
+	jobId: string | undefined;
 }
 
 export interface ServerFailureResponse {
-  statusCode: number;
-  errorMessage: string;
+	statusCode: number;
+	errorMessage: string;
 }

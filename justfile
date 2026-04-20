@@ -8,3 +8,7 @@ create-package:
 # Start Plum
 start:
     @mprocs
+
+# Format Project
+format:
+    @bun run format
