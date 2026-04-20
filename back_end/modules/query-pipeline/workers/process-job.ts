@@ -4,12 +4,12 @@ import type { Logger } from "pino";
 
 import type { Product, SearchQuery } from "@plum/types";
 
-import { embedUserInput } from "../embed/embedUserInput";
+import { embedUserInput } from "../embed/embed-user-input";
 import type { Embeder } from "../embed/embeder";
 import { ErrorProcessingJob } from "../error/error";
 import type { Querier } from "../query/querier";
-import { queryEmbededUserInput } from "../query/queryDatabase";
-import { transformUserInput } from "../transform/transformUserInput";
+import { queryEmbededUserInput } from "../query/query-database";
+import { transformUserInput } from "../transform/transform-user-input";
 import type { Transformer } from "../transform/transformer";
 
 export default async function processJob(

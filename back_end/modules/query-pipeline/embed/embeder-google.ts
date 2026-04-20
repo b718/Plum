@@ -1,7 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 import type { GoogleGenAI as Client } from "@google/genai";
 
-import { ErrorEmbed } from "../error/errorEmbed";
+import { ErrorEmbed } from "../error/error-embed";
 import { VECTOR_OUTPUT_SIZE } from "./const";
 import type { Embeder } from "./embeder";
 

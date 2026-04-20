@@ -2,7 +2,7 @@ import { type QdrantClient as Client, QdrantClient } from "@qdrant/js-client-res
 
 import type { Product } from "@plum/types";
 
-import { ErrorQuery } from "../error/errorQuery";
+import { ErrorQuery } from "../error/error-query";
 import type { Querier } from "./querier";
 
 const COLLECTION_NAME = "products";

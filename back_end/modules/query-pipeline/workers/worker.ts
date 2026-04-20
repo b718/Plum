@@ -2,10 +2,10 @@ import { Worker } from "bullmq";
 import Redis from "ioredis";
 import pino from "pino";
 
-import { EmbederGoogle } from "../embed/embederGoogle";
-import { QuerierQdrant } from "../query/querierQdrant";
-import { TransformerGoogle } from "../transform/transformerGoogle";
-import processJob from "./processJob";
+import { EmbederGoogle } from "../embed/embeder-google";
+import { QuerierQdrant } from "../query/querier-qdrant";
+import { TransformerGoogle } from "../transform/transformer-google";
+import processJob from "./process-job";
 
 export default function startWorkers(count: number) {
 	const logger = pino({ name: "search-worker" });
