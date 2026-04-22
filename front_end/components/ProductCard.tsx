@@ -9,10 +9,12 @@ interface Props {
 }
 
 export default function ProductCard({ product }: Props) {
+	const imageUrl = product.imageUrl || dogImage;
+
 	return (
 		<div className="flex flex-col rounded-2xl border border-gray-100 bg-white shadow-sm transition-shadow hover:shadow-md overflow-hidden">
 			<div className="relative h-48 w-full">
-				<Image src={product.imageUrl ?? dogImage} alt={product.name} fill className="object-cover" />
+				<Image src={imageUrl} alt={product.name} fill className="object-cover" />
 			</div>
 
 			<div className="flex flex-col gap-3 p-5 flex-1">
