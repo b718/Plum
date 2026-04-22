@@ -1,6 +1,6 @@
-import { ErrorProcessingJob } from "./error";
+import { ErrorQueryJob } from "./error";
 
-export class ErrorEmbed extends ErrorProcessingJob {
+export class ErrorEmbed extends ErrorQueryJob {
 	readonly step = "embed";
 
 	constructor(causeOfError: unknown) {

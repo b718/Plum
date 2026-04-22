@@ -1,4 +1,4 @@
-export abstract class ErrorProcessingJob extends Error {
+export abstract class ErrorQueryJob extends Error {
 	abstract readonly step: string;
 
 	constructor(message: string, causeOfError: unknown) {

@@ -1,6 +1,6 @@
-import { ErrorProcessingJob } from "./error";
+import { ErrorQueryJob } from "./error";
 
-export class ErrorTransform extends ErrorProcessingJob {
+export class ErrorTransform extends ErrorQueryJob {
 	readonly step = "transform";
 
 	constructor(causeOfError: unknown) {
