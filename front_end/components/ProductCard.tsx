@@ -13,8 +13,8 @@ export default function ProductCard({ product }: Props) {
 
 	return (
 		<div className="flex flex-col rounded-2xl border border-gray-100 bg-white shadow-sm transition-shadow hover:shadow-md overflow-hidden">
-			<div className="relative h-48 w-full">
-				<Image src={imageUrl} alt={product.name} fill className="object-cover" />
+			<div className="relative h-48 w-full mt-5">
+				<Image src={imageUrl} alt={product.name} fill className="object-contain" sizes="100vw" />
 			</div>
 
 			<div className="flex flex-col gap-3 p-5 flex-1">
