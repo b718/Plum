@@ -2,5 +2,6 @@ import type { Product } from "@plum/types";
 
 export interface Querier {
 	readonly querierType: string;
-	query(embededUserInput: number[]): Promise<Product[]>;
+	query(embededInput: number[]): Promise<Product[]>;
+	upload(embededInput: number[], productData: Product): Promise<void>;
 }

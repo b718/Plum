@@ -16,10 +16,10 @@ export class QuerierQdrant implements Querier {
 		this.client = new QdrantClient({ host: "localhost", port: 6333 });
 	}
 
-	async query(embededUserInput: number[]): Promise<Product[]> {
+	async query(embededInput: number[]): Promise<Product[]> {
 		try {
 			const results = await this.client.search(COLLECTION_NAME, {
-				vector: embededUserInput,
+				vector: embededInput,
 				with_payload: true,
 			});
 			return results
@@ -28,5 +28,23 @@ export class QuerierQdrant implements Querier {
 		} catch (error) {
 			throw new ErrorQuery(error);
 		}
+	}
+
+	async upload(embededInput: number[], productData: Product): Promise<void> {
+		try {
+			await this.client.upsert(COLLECTION_NAME, {
+				points: [this.formatEmbededInput(embededInput, productData)],
+			});
+		} catch (error) {
+			throw new ErrorQuery(error);
+		}
+	}
+
+	private formatEmbededInput(embededInput: number[], productData: Product) {
+		return {
+			id: productData.id,
+			vector: embededInput,
+			payload: { ...productData },
+		};
 	}
 }
