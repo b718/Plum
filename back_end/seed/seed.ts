@@ -29,6 +29,7 @@ async function seedDatabase() {
 				category: item.category,
 				tag: item.tag,
 				url: item.url,
+				imageUr: "",
 			},
 		})),
 	});
