@@ -19,3 +19,15 @@ export interface ServerFailureResponse {
 	statusCode: number;
 	errorMessage: string;
 }
+
+export interface UrlScrapeJobData {
+	domain: string;
+}
+
+export interface ProductScrapeJobData {
+	productUrl: string;
+}
+
+export interface ProductUploadJobData {
+	product: Product;
+}
