@@ -4,6 +4,7 @@ export interface Product {
 	description: string;
 	category: string;
 	url: string;
+	imageUrl: string;
 }
 
 export interface SearchQuery {

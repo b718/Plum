@@ -92,6 +92,7 @@ export class ScraperSsense implements Scraper {
 			category: "clothing",
 			name: extractedProductData.name ?? "",
 			url: BASE_URL + (extractedProductData.url ?? ""),
+			imageUrl: extractedProductData.image ?? "",
 		};
 
 		if (product.url == "") {

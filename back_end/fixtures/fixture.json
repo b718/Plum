@@ -5,7 +5,8 @@
     "description": "Automated bookkeeping that reconciles your accounts in real time and flags anomalies before they become problems.",
     "category": "Fintech",
     "tag": "Accounting",
-    "url": "https://www.amazon.ca/Concise-Mastery-Robert-Greene/dp/1846681561"
+    "url": "https://www.amazon.ca/Concise-Mastery-Robert-Greene/dp/1846681561",
+    "imageUrl": ""
   },
   {
     "id": "2",
@@ -13,7 +14,8 @@
     "description": "Employee wellness platform with daily check-ins, burnout prediction, and actionable team health reports.",
     "category": "Health",
     "tag": "HR & Wellness",
-    "url": "https://www.amazon.ca/Concise-Mastery-Robert-Greene/dp/1846681561"
+    "url": "https://www.amazon.ca/Concise-Mastery-Robert-Greene/dp/1846681561",
+    "imageUrl": ""
   },
   {
     "id": "3",
@@ -21,7 +23,8 @@
     "description": "Turn messy Notion pages and Google Docs into structured, versioned knowledge bases with one click.",
     "category": "Productivity",
     "tag": "Documentation",
-    "url": "https://www.amazon.ca/Concise-Mastery-Robert-Greene/dp/1846681561"
+    "url": "https://www.amazon.ca/Concise-Mastery-Robert-Greene/dp/1846681561",
+    "imageUrl": ""
   },
   {
     "id": "4",
@@ -29,7 +32,8 @@
     "description": "Small-business tax filing made simple — import your transactions, answer 10 questions, done.",
     "category": "Fintech",
     "tag": "Tax",
-    "url": "https://www.amazon.ca/Concise-Mastery-Robert-Greene/dp/1846681561"
+    "url": "https://www.amazon.ca/Concise-Mastery-Robert-Greene/dp/1846681561",
+    "imageUrl": ""
   },
   {
     "id": "5",
@@ -37,7 +41,8 @@
     "description": "Product analytics focused on retention — visualize user journeys and spot drop-off points at a glance.",
     "category": "Analytics",
     "tag": "Retention",
-    "url": "https://www.amazon.ca/Concise-Mastery-Robert-Greene/dp/1846681561"
+    "url": "https://www.amazon.ca/Concise-Mastery-Robert-Greene/dp/1846681561",
+    "imageUrl": ""
   },
   {
     "id": "6",
@@ -45,7 +50,8 @@
     "description": "Shift scheduling for hourly teams with automatic conflict detection, swap requests, and payroll exports.",
     "category": "Operations",
     "tag": "Scheduling",
-    "url": "https://www.amazon.ca/Concise-Mastery-Robert-Greene/dp/1846681561"
+    "url": "https://www.amazon.ca/Concise-Mastery-Robert-Greene/dp/1846681561",
+    "imageUrl": ""
   },
   {
     "id": "7",
@@ -53,7 +59,8 @@
     "description": "Zero-knowledge password manager built for teams — granular permissions, audit logs, and SSO support.",
     "category": "Security",
     "tag": "Identity",
-    "url": "https://www.amazon.ca/Concise-Mastery-Robert-Greene/dp/1846681561"
+    "url": "https://www.amazon.ca/Concise-Mastery-Robert-Greene/dp/1846681561",
+    "imageUrl": ""
   },
   {
     "id": "8",
@@ -61,6 +68,7 @@
     "description": "Triage your support inbox automatically — classify, route, and draft replies using your past resolved tickets.",
     "category": "Support",
     "tag": "Automation",
-    "url": "https://www.amazon.ca/Concise-Mastery-Robert-Greene/dp/1846681561"
+    "url": "https://www.amazon.ca/Concise-Mastery-Robert-Greene/dp/1846681561",
+    "imageUrl": ""
   }
 ]
