@@ -1,0 +1,21 @@
+{
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "productID": 19088761,
+    "name": "Khaki Sulfur Dyed Oxford Vintage Jacket",
+    "sku": "261996M180003",
+    "brand": {
+        "@type": "Brand",
+        "name": "ssstein"
+    },
+    "offers": {
+        "@type": "Offer",
+        "price": 1235,
+        "priceCurrency": "CAD",
+        "availability": "https://schema.org/InStock",
+        "url": "/en-ca/men/product/stein/khaki-sulfur-dyed-oxford-vintage-jacket/19088761"
+    },
+    "url": "/en-ca/men/product/stein/khaki-sulfur-dyed-oxford-vintage-jacket/19088761",
+    "description": "Cotton canvas jacket.\r\n\r\n· Fading, distressing, and stains throughout\r\n· Buffed leather spread collar\r\n· Concealed zip closure\r\n· Flap pocket at chest\r\n· Patch pockets at waist\r\n· Elasticized hem\r\n· Dropped shoulders\r\n· Adjustable buttoned barrel cuffs\r\n· Unlined\r\n\r\nSupplier color: Khaki beige",
+    "image": "https://img.ssensemedia.com/images/261996M180003_1/stein-khaki-sulfur-dyed-oxford-vintage-jacket.jpg"
+}
