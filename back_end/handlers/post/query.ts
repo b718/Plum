@@ -5,6 +5,8 @@ import pino from "pino";
 
 import type { ResultsQuery, SearchQuery, ServerFailureResponse } from "@plum/types";
 
+import { SEARCH_JOB } from "../../consts/queue";
+
 export default function queryHandler(queue: Queue) {
 	const logger = pino({ name: __filename });
 
@@ -19,7 +21,7 @@ export default function queryHandler(queue: Queue) {
 				return c.json(response, StatusCodes.BAD_REQUEST);
 			}
 
-			const job = await queue.add("search", { text: body.text });
+			const job = await queue.add(SEARCH_JOB, { text: body.text });
 			const response: ResultsQuery = {
 				jobId: job.id,
 			};

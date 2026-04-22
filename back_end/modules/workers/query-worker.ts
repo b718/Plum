@@ -4,9 +4,10 @@ import pino, { type Logger } from "pino";
 
 import type { Product, SearchQuery } from "@plum/types";
 
+import { QUEUE_SEARCH } from "../../consts/queue";
 import { embedUserInput } from "../embed/embed-user-input";
 import type { Embeder } from "../embed/embeder";
-import { ErrorProcessingJob } from "../query-pipeline/error/error";
+import { ErrorQueryJob } from "../query-pipeline/error/error";
 import { transformUserInput } from "../query-pipeline/transform/transform-user-input";
 import type { Transformer } from "../query-pipeline/transform/transformer";
 import type { Querier } from "../query/querier";
@@ -15,6 +16,8 @@ import type { Worker } from "./worker";
 
 export class QueryWorker implements Worker {
 	readonly workerType = "query";
+
+	readonly WORKER_NAME = "search-worker";
 
 	private readonly transformer: Transformer;
 	private readonly embeder: Embeder;
@@ -25,20 +28,20 @@ export class QueryWorker implements Worker {
 		this.transformer = transformer;
 		this.embeder = embeder;
 		this.querier = querier;
-		this.logger = pino({ name: "search-worker" });
+		this.logger = pino({ name: this.WORKER_NAME });
 	}
 
 	startWorkers(workerCount: number): void {
 		for (let i = 0; i < workerCount; i++) {
 			const connection = new Redis({ maxRetriesPerRequest: null });
 			const publisher = new Redis();
-			new QueueWorker("search-jobs", async (job) => this.processJob(i + 1, job, publisher), {
+			new QueueWorker(QUEUE_SEARCH, async (job) => this.processJob(i + 1, job, publisher), {
 				connection,
 			});
 		}
 	}
 
-	private async processJob(id: number, job: Job<SearchQuery, any, string>, publisher: Redis) {
+	private async processJob(id: number, job: Job<SearchQuery>, publisher: Redis) {
 		try {
 			const userInput = job.data.text;
 			const transformedUserInput = await transformUserInput(this.transformer, userInput);
@@ -51,7 +54,7 @@ export class QueryWorker implements Worker {
 			await this.cacheAndPublishResults(job.id, publisher, queriedProducts);
 		} catch (error) {
 			const errorMessage =
-				error instanceof ErrorProcessingJob ? error.message : "unexpected error processing job";
+				error instanceof ErrorQueryJob ? error.message : "unexpected error processing job";
 			this.logger.error({ err: error }, errorMessage);
 		}
 	}

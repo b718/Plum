@@ -1,7 +1,7 @@
 import { Queue } from "bullmq";
 import Redis from "ioredis";
 
-import { QUEUE_URL_SCRAPE, URL_SCRAPE_JOB } from "../consts/queues";
+import { QUEUE_URL_SCRAPE, URL_SCRAPE_JOB } from "../consts/queue";
 
 const domain = process.argv[2];
 
