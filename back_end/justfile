@@ -12,3 +12,7 @@ set-up-local-dev:
     @sleep 1
     @bun ./seed/seed.ts
     @bun run dev
+
+# Scrape a domain that is supported
+scrape domain:
+    @cd scripts && bun scrape.ts {{domain}}
