@@ -53,11 +53,17 @@ export class ScraperWorker implements Worker {
 			);
 
 			for (let i = 0; i < workerCount; i++) {
-				new QueueWorker(
+				const productScrapeWorker = new QueueWorker(
 					QUEUE_PRODUCT_SCRAPE,
 					async (job) => this.processProductScrapeJob(i + 1, job, productUploadQueue),
 					{ connection: new Redis({ maxRetriesPerRequest: null }), lockDuration: 60000 },
 				);
+				productScrapeWorker.on("failed", (job, err) => {
+					this.logger.error(
+						{ jobId: job?.id, productUrl: job?.data.productUrl, err: err },
+						"product scrape job permanently failed",
+					);
+				});
 			}
 
 			new QueueWorker(QUEUE_PRODUCT_UPLOAD, async (job) => this.processProductUploadJob(1, job), {
@@ -77,7 +83,13 @@ export class ScraperWorker implements Worker {
 			this.logger.info("scraping product urls");
 			const urls = await this.scraper.scrapeProductUrls(job.data.domain);
 			await Promise.all(
-				urls.map((url) => productScrapeQueue.add(PRODUCT_SCRAPE_JOB, { productUrl: url })),
+				urls.map((url) =>
+					productScrapeQueue.add(
+						PRODUCT_SCRAPE_JOB,
+						{ productUrl: url },
+						{ attempts: 3, backoff: { type: "exponential", delay: 60_000 } },
+					),
+				),
 			);
 			this.logger.info(
 				{ workerId: id, domainUrl: job.data.domain, scrapedUrlCount: urls.length },

@@ -56,11 +56,16 @@ export class ScraperSsense implements Scraper {
 		try {
 			log.info("scraping product data");
 			await this.blockHeavyAssets(page);
-			await page.goto(productUrl, { timeout: 20_000 });
+			const response = await page.goto(productUrl, { timeout: 20_000 });
+			if (response?.status() == 403) {
+				throw new ErrorBotDetected(productUrl);
+			}
+
 			const productData = await this.extractProductData(page);
 			if (productData) log.info({ productId: productData.id }, "product scraped");
 			return productData;
 		} catch (err) {
+			if (err instanceof ErrorBotDetected) throw err;
 			log.error({ err: err }, "failed to scrape product data");
 			return null;
 		} finally {
