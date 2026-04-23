@@ -32,8 +32,15 @@ export class QuerierQdrant implements Querier {
 
 	async upload(embededInput: number[], productData: Product): Promise<void> {
 		try {
+			const existingPoint = await this.client.scroll(COLLECTION_NAME, {
+				filter: {
+					must: [{ key: "productDomainId", match: { value: productData.productDomainId } }],
+				},
+				limit: 1,
+			});
+			const pointId = existingPoint.points[0]?.id ?? productData.id;
 			await this.client.upsert(COLLECTION_NAME, {
-				points: [this.formatEmbededInput(embededInput, productData)],
+				points: [this.formatEmbededInput(embededInput, { ...productData, id: String(pointId) })],
 			});
 		} catch (error) {
 			throw new ErrorQuery(error);
