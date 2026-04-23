@@ -88,6 +88,7 @@ export class ScraperSsense implements Scraper {
 	private createProductData(extractedProductData: Record<string, string | undefined>): Product | null {
 		const product: Product = {
 			id: randomUUIDv7(),
+			productDomainId: extractedProductData.productID ?? "",
 			description: extractedProductData.description ?? "",
 			category: "clothing",
 			name: extractedProductData.name ?? "",
@@ -100,6 +101,10 @@ export class ScraperSsense implements Scraper {
 		}
 
 		if (product.description == "") {
+			return null;
+		}
+
+		if (product.productDomainId == "") {
 			return null;
 		}
 
