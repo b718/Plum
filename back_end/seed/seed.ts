@@ -24,6 +24,7 @@ async function seedDatabase() {
 			vector: randomVector(),
 			payload: {
 				id: item.id,
+				productDomainId: item.id,
 				name: item.name,
 				description: item.description,
 				category: item.category,
