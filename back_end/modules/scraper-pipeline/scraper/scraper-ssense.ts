@@ -6,6 +6,7 @@ import StealthPlugin from "puppeteer-extra-plugin-stealth";
 
 import type { Product } from "@plum/types";
 
+import { ErrorBotDetected } from "../error/error-bot-detected";
 import type { Scraper } from "./scraper";
 
 const BASE_URL = "https://www.ssense.com";
