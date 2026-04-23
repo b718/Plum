@@ -37,31 +37,35 @@ export class ScraperWorker implements Worker {
 	}
 
 	startWorkers(workerCount: number): void {
-		const productScrapeQueue = new Queue(QUEUE_PRODUCT_SCRAPE, {
-			connection: new Redis(),
-		});
+		try {
+			const productScrapeQueue = new Queue(QUEUE_PRODUCT_SCRAPE, {
+				connection: new Redis(),
+			});
 
-		const productUploadQueue = new Queue(QUEUE_PRODUCT_UPLOAD, {
-			connection: new Redis(),
-		});
+			const productUploadQueue = new Queue(QUEUE_PRODUCT_UPLOAD, {
+				connection: new Redis(),
+			});
 
-		new QueueWorker(
-			QUEUE_URL_SCRAPE,
-			async (job) => this.processUrlScrapeJob(1, job, productScrapeQueue),
-			{ connection: new Redis({ maxRetriesPerRequest: null }) },
-		);
-
-		for (let i = 0; i < workerCount; i++) {
 			new QueueWorker(
-				QUEUE_PRODUCT_SCRAPE,
-				async (job) => this.processProductScrapeJob(i + 1, job, productUploadQueue),
-				{ connection: new Redis({ maxRetriesPerRequest: null }) },
+				QUEUE_URL_SCRAPE,
+				async (job) => this.processUrlScrapeJob(1, job, productScrapeQueue),
+				{ connection: new Redis({ maxRetriesPerRequest: null }), lockDuration: 120000 },
 			);
-		}
 
-		new QueueWorker(QUEUE_PRODUCT_UPLOAD, async (job) => this.processProductUploadJob(1, job), {
-			connection: new Redis({ maxRetriesPerRequest: null }),
-		});
+			for (let i = 0; i < workerCount; i++) {
+				new QueueWorker(
+					QUEUE_PRODUCT_SCRAPE,
+					async (job) => this.processProductScrapeJob(i + 1, job, productUploadQueue),
+					{ connection: new Redis({ maxRetriesPerRequest: null }), lockDuration: 60000 },
+				);
+			}
+
+			new QueueWorker(QUEUE_PRODUCT_UPLOAD, async (job) => this.processProductUploadJob(1, job), {
+				connection: new Redis({ maxRetriesPerRequest: null }),
+			});
+		} catch (err) {
+			this.logger.error({ err: err }, "error starting scrape workers");
+		}
 	}
 
 	private async processUrlScrapeJob(
@@ -114,7 +118,7 @@ export class ScraperWorker implements Worker {
 	private async processProductUploadJob(id: number, job: Job<ProductUploadJobData>): Promise<void> {
 		try {
 			const embededProductData = await this.embeder.embedProductData(job.data.product);
-			this.querier.upload(embededProductData, job.data.product);
+			await this.querier.upload(embededProductData, job.data.product);
 			this.logger.info(
 				{ workerId: id, productId: job.data.product.id },
 				"product data uploaded successfully",

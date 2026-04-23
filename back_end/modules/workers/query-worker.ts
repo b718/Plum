@@ -32,12 +32,16 @@ export class QueryWorker implements Worker {
 	}
 
 	startWorkers(workerCount: number): void {
-		for (let i = 0; i < workerCount; i++) {
-			const connection = new Redis({ maxRetriesPerRequest: null });
-			const publisher = new Redis();
-			new QueueWorker(QUEUE_SEARCH, async (job) => this.processJob(i + 1, job, publisher), {
-				connection,
-			});
+		try {
+			for (let i = 0; i < workerCount; i++) {
+				const connection = new Redis({ maxRetriesPerRequest: null });
+				const publisher = new Redis();
+				new QueueWorker(QUEUE_SEARCH, async (job) => this.processJob(i + 1, job, publisher), {
+					connection,
+				});
+			}
+		} catch (err) {
+			this.logger.error({ err }, "error starting query workers");
 		}
 	}
 
@@ -52,10 +56,11 @@ export class QueryWorker implements Worker {
 				"job processed",
 			);
 			await this.cacheAndPublishResults(job.id, publisher, queriedProducts);
-		} catch (error) {
+		} catch (err) {
 			const errorMessage =
-				error instanceof ErrorQueryJob ? error.message : "unexpected error processing job";
-			this.logger.error({ err: error }, errorMessage);
+				err instanceof ErrorQueryJob ? err.message : "unexpected error processing job";
+			this.logger.error({ err }, errorMessage);
+			throw err;
 		}
 	}
 
