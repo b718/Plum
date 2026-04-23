@@ -1,6 +1,7 @@
 [
   {
     "id": "1",
+    "productDomainId": "1",
     "name": "Ledger AI",
     "description": "Automated bookkeeping that reconciles your accounts in real time and flags anomalies before they become problems.",
     "category": "Fintech",
@@ -10,6 +11,7 @@
   },
   {
     "id": "2",
+    "productDomainId": "2",
     "name": "PulseCheck",
     "description": "Employee wellness platform with daily check-ins, burnout prediction, and actionable team health reports.",
     "category": "Health",
@@ -19,6 +21,7 @@
   },
   {
     "id": "3",
+    "productDomainId": "3",
     "name": "FlowDocs",
     "description": "Turn messy Notion pages and Google Docs into structured, versioned knowledge bases with one click.",
     "category": "Productivity",
@@ -28,6 +31,7 @@
   },
   {
     "id": "4",
+    "productDomainId": "4",
     "name": "TaxPilot",
     "description": "Small-business tax filing made simple — import your transactions, answer 10 questions, done.",
     "category": "Fintech",
@@ -37,6 +41,7 @@
   },
   {
     "id": "5",
+    "productDomainId": "5",
     "name": "CohortLens",
     "description": "Product analytics focused on retention — visualize user journeys and spot drop-off points at a glance.",
     "category": "Analytics",
@@ -46,6 +51,7 @@
   },
   {
     "id": "6",
+    "productDomainId": "6",
     "name": "ShiftBoard",
     "description": "Shift scheduling for hourly teams with automatic conflict detection, swap requests, and payroll exports.",
     "category": "Operations",
@@ -55,6 +61,7 @@
   },
   {
     "id": "7",
+    "productDomainId": "7",
     "name": "VaultPass",
     "description": "Zero-knowledge password manager built for teams — granular permissions, audit logs, and SSO support.",
     "category": "Security",
@@ -64,6 +71,7 @@
   },
   {
     "id": "8",
+    "productDomainId": "8",
     "name": "InboxAI",
     "description": "Triage your support inbox automatically — classify, route, and draft replies using your past resolved tickets.",
     "category": "Support",
