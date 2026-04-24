@@ -1,0 +1,29 @@
+{
+    "@context": "http://schema.org",
+    "@type": "Product",
+    "name": "Martine Rose Washed Jeans",
+    "image": "https://media-assets.grailed.com/prd/listing/temp/9d51b51a1ffd4824bb8dec0199a58889",
+    "description": "Find Martine Rose Washed Jeans and more items on grailed.com",
+    "brand": {
+        "@type": "Brand",
+        "name": "Martine Rose"
+    },
+    "offers": {
+        "@type": "Offer",
+        "priceCurrency": "USD",
+        "price": "195",
+        "availability": "http://schema.org/InStock",
+        "url": "https://www.grailed.com/listings/94412343-martine-rose-martine-rose-washed-jeans"
+    },
+    "review": {
+        "@type": "Review",
+        "reviewRating": {
+            "@type": "Rating",
+            "ratingValue": "5"
+        },
+        "author": {
+            "@type": "Person",
+            "name": "Grailed Buyers"
+        }
+    }
+}
