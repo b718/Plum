@@ -9,5 +9,5 @@ export async function transformUserInput(transformer: Transformer, userInput: st
 		{ userInput: userInput, transformerType: transformer.transformerType },
 		"transforming user input",
 	);
-	return transformer.transformUserInput(userInput);
+	return await transformer.transformUserInput(userInput);
 }
