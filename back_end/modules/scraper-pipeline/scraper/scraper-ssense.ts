@@ -16,9 +16,9 @@ chromium.use(StealthPlugin());
 export class ScraperSsense implements Scraper {
 	readonly scraperType = "ssense";
 
-	private static readonly SELECTOR_PRODUCT_ROW = ".plp-products__row";
-	private static readonly SELECTOR_PRODUCT_LINK = ".plp-products__column a[href]";
-	private static readonly SELECTOR_STRUCTURED_DATA = 'script[type="application/ld+json"]';
+	private readonly SELECTOR_PRODUCT_ROW = ".plp-products__row";
+	private readonly SELECTOR_PRODUCT_LINK = ".plp-products__column a[href]";
+	private readonly SELECTOR_STRUCTURED_DATA = 'script[type="application/ld+json"]';
 
 	private readonly logger;
 
@@ -27,15 +27,15 @@ export class ScraperSsense implements Scraper {
 	}
 
 	async scrapeProductUrls(url: string): Promise<string[]> {
-		const log = this.logger.child({ url: url });
+		const log = this.logger.child({ scraperType: this.scraperType, url: url });
 		const browser = await chromium.launch({ headless: true });
 		const page = await browser.newPage();
 		try {
 			log.info("scraping product URLs");
 			await this.blockHeavyAssets(page);
 			await page.goto(url, { timeout: 20_000 });
-			await page.waitForSelector(ScraperSsense.SELECTOR_PRODUCT_ROW, { timeout: 15_000 });
-			const hrefs = await page.$$eval(ScraperSsense.SELECTOR_PRODUCT_LINK, (anchors) =>
+			await page.waitForSelector(this.SELECTOR_PRODUCT_ROW, { timeout: 15_000 });
+			const hrefs = await page.$$eval(this.SELECTOR_PRODUCT_LINK, (anchors) =>
 				anchors.map((a) => a.getAttribute("href")).filter((h) => h !== null),
 			);
 			const urls = hrefs.map((href) => (href.startsWith("http") ? href : `${BASE_URL}${href}`));
@@ -51,7 +51,7 @@ export class ScraperSsense implements Scraper {
 	}
 
 	async scrapeProductData(productUrl: string): Promise<Product | null> {
-		const log = this.logger.child({ url: productUrl });
+		const log = this.logger.child({ scraperType: this.scraperType, url: productUrl });
 		const browser = await chromium.launch({ headless: true });
 		const page = await browser.newPage();
 		try {
@@ -77,11 +77,11 @@ export class ScraperSsense implements Scraper {
 
 	private async extractProductData(page: Page): Promise<Product | null> {
 		try {
-			await page.waitForSelector(ScraperSsense.SELECTOR_STRUCTURED_DATA, {
+			await page.waitForSelector(this.SELECTOR_STRUCTURED_DATA, {
 				state: "attached",
 				timeout: 30_000,
 			});
-			const extractedProductData = await page.$eval(ScraperSsense.SELECTOR_STRUCTURED_DATA, (el) =>
+			const extractedProductData = await page.$eval(this.SELECTOR_STRUCTURED_DATA, (el) =>
 				JSON.parse(el.textContent),
 			);
 			return this.createProductData(extractedProductData);
