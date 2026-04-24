@@ -1,82 +1,25 @@
 import { randomUUIDv7 } from "bun";
 import type { Logger } from "pino";
 import type { Page } from "playwright";
-import { chromium } from "playwright-extra";
-import StealthPlugin from "puppeteer-extra-plugin-stealth";
 
 import type { Product } from "@plum/types";
 
-import { ErrorBotDetected } from "../error/error-bot-detected";
-import type { Scraper } from "./scraper";
+import { Scraper } from "./scraper";
 
-const BASE_URL = "https://www.grailed.com";
+export class ScraperGrailed extends Scraper {
+	protected readonly SCRAPER_TYPE = "grailed";
+	protected readonly BASE_URL = "https://www.grailed.com";
+	protected readonly SELECTOR_PRODUCT_ROW = "[class*='FeedAndFilters_feed_']";
+	protected readonly SELECTOR_PRODUCT_LINK = "[class*='UserItemForFeed_feedItem'] a[href]";
 
-chromium.use(StealthPlugin());
-
-export class ScraperGrailed implements Scraper {
-	readonly scraperType = "grailed";
-
-	private readonly SELECTOR_PRODUCT_ROW = "[class*='FeedAndFilters_feed_']";
-	private readonly SELECTOR_PRODUCT_LINK = "[class*='UserItemForFeed_feedItem'] a[href]";
 	private readonly SELECTOR_STRUCTURED_DATA = 'script[type="application/ld+json"]';
 	private readonly PRODUCT_DESCRIPTION_SELECTOR = "[class*='Description_paragraph_']";
 
-	private readonly logger;
-
 	constructor(logger: Logger) {
-		this.logger = logger;
+		super(logger);
 	}
 
-	async scrapeProductUrls(url: string): Promise<string[]> {
-		const log = this.logger.child({ scraperType: this.scraperType, url: url });
-		const browser = await chromium.launch({ headless: true });
-		const page = await browser.newPage();
-		try {
-			log.info("scraping product URLs");
-			await this.blockHeavyAssets(page);
-			await page.goto(url, { timeout: 20_000 });
-			await page.waitForSelector(this.SELECTOR_PRODUCT_ROW, { timeout: 15_000 });
-			const hrefs = await page.$$eval(this.SELECTOR_PRODUCT_LINK, (anchors) =>
-				anchors.map((a) => a.getAttribute("href")).filter((h) => h !== null),
-			);
-			const urls = hrefs.map((href) => (href.startsWith("http") ? href : `${BASE_URL}${href}`));
-			log.info({ count: urls.length }, "product URLs scraped");
-			return urls;
-		} catch (err) {
-			log.error({ err: err }, "failed to scrape product URLs");
-			return [];
-		} finally {
-			await page.close();
-			await browser.close();
-		}
-	}
-
-	async scrapeProductData(productUrl: string): Promise<Product | null> {
-		const log = this.logger.child({ scraperType: this.scraperType, url: productUrl });
-		const browser = await chromium.launch({ headless: true });
-		const page = await browser.newPage();
-		try {
-			log.info("scraping product data");
-			await this.blockHeavyAssets(page);
-			const response = await page.goto(productUrl, { timeout: 20_000 });
-			if (response?.status() == 403) {
-				throw new ErrorBotDetected(productUrl);
-			}
-
-			const productData = await this.extractProductData(page);
-			if (productData) log.info({ productId: productData.id }, "product scraped");
-			return productData;
-		} catch (err) {
-			if (err instanceof ErrorBotDetected) throw err;
-			log.error({ err: err }, "failed to scrape product data");
-			return null;
-		} finally {
-			await page.close();
-			await browser.close();
-		}
-	}
-
-	private async extractProductData(page: Page): Promise<Product | null> {
+	protected async extractProductData(page: Page): Promise<Product | null> {
 		try {
 			await Promise.all([
 				page.waitForSelector(this.SELECTOR_STRUCTURED_DATA, {
@@ -138,9 +81,5 @@ export class ScraperGrailed implements Scraper {
 		}
 
 		return product;
-	}
-
-	private async blockHeavyAssets(page: Page): Promise<void> {
-		await page.route("**/*.{png,jpg,jpeg,gif,svg,woff,woff2,ttf,mp4}", (route) => route.abort());
 	}
 }
