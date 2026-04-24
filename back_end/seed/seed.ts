@@ -1,8 +1,8 @@
 import { QdrantClient } from "@qdrant/js-client-rest";
 import pino from "pino";
 
+import { VECTOR_OUTPUT_SIZE } from "../consts/embeded";
 import fixtures from "../fixtures/fixture.json";
-import { VECTOR_OUTPUT_SIZE } from "../modules/embed/const";
 
 function randomVector(): number[] {
 	return Array.from({ length: VECTOR_OUTPUT_SIZE }, () => Math.random());
