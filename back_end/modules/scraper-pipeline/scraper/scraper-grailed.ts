@@ -50,7 +50,6 @@ export class ScraperGrailed extends Scraper {
 		extractedProductData: any,
 		extractedProductDescrption: string,
 	): Product | null {
-		console.log(extractedProductDescrption);
 		const productUrl = (extractedProductData?.offers?.url as string) ?? "";
 		if (productUrl == "") {
 			return null;
