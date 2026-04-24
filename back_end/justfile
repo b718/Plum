@@ -1,5 +1,6 @@
 mod database './justfiles/database.just'
 mod cache './justfiles/cache.just'
+mod scrape './justfiles/scrape.just'
 
 # List everything
 default:
@@ -7,12 +8,8 @@ default:
 
 # Set-up local instance of Plum
 set-up-local-dev:
-    @just database start-database
-    @just cache start-cache
+    @just database::start-database
+    @just cache::start-cache
     @sleep 1
     @bun ./seed/seed.ts
     @bun run dev
-
-# Scrape a domain that is supported
-scrape domain:
-    @cd scripts && bun scrape.ts {{domain}}
