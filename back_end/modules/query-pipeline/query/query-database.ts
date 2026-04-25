@@ -1,10 +1,9 @@
-import pino from "pino";
-
 import type { Product } from "@plum/types";
 
+import { getLogger } from "../../../logger";
 import type { Querier } from "../../querier/querier";
 
-const logger = pino({ name: __filename });
+const logger = getLogger(__filename);
 
 export async function queryEmbededUserInput(
 	querier: Querier,

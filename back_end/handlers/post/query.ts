@@ -1,14 +1,14 @@
 import type { Queue } from "bullmq";
 import type { Context } from "hono";
 import { StatusCodes } from "http-status-codes";
-import pino from "pino";
 
 import type { ResultsQuery, SearchQuery, ServerFailureResponse } from "@plum/types";
 
 import { SEARCH_JOB } from "../../consts/queue";
+import { getLogger } from "../../logger";
 
 export default function queryHandler(queue: Queue) {
-	const logger = pino({ name: __filename });
+	const logger = getLogger(__filename);
 
 	return async (c: Context) => {
 		try {

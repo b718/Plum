@@ -1,8 +1,7 @@
-import pino from "pino";
-
+import { getLogger } from "../../../logger";
 import type { Transformer } from "./transformer";
 
-const logger = pino({ name: __filename });
+const logger = getLogger(__filename);
 
 export async function transformUserInput(transformer: Transformer, userInput: string): Promise<string> {
 	logger.info(
