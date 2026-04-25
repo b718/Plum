@@ -1,17 +1,18 @@
 import { Job, Worker as QueueWorker } from "bullmq";
 import Redis from "ioredis";
-import pino, { type Logger } from "pino";
 
 import type { Product, SearchQuery } from "@plum/types";
 
 import { QUEUE_SEARCH } from "../../consts/queue";
-import { embedUserInput } from "../embed/embed-user-input";
-import type { Embeder } from "../embed/embeder";
+import { type Logger, getLogger } from "../../logger";
+import type { Embeder } from "../embeder/embeder";
+import type { Querier } from "../querier/querier";
+import { embedUserInput } from "../query-pipeline/embed/embed-user-input";
 import { ErrorQueryJob } from "../query-pipeline/error/error";
+import { queryEmbededUserInput } from "../query-pipeline/query/query-database";
+import type { Storer } from "../query-pipeline/storer/storer";
 import { transformUserInput } from "../query-pipeline/transform/transform-user-input";
 import type { Transformer } from "../query-pipeline/transform/transformer";
-import type { Querier } from "../query/querier";
-import { queryEmbededUserInput } from "../query/query-database";
 import type { Worker } from "./worker";
 
 export class QueryWorker implements Worker {
@@ -22,13 +23,15 @@ export class QueryWorker implements Worker {
 	private readonly transformer: Transformer;
 	private readonly embeder: Embeder;
 	private readonly querier: Querier;
+	private readonly storer: Storer;
 	private readonly logger: Logger;
 
-	constructor(transformer: Transformer, embeder: Embeder, querier: Querier) {
+	constructor(transformer: Transformer, embeder: Embeder, querier: Querier, storer: Storer) {
 		this.transformer = transformer;
 		this.embeder = embeder;
 		this.querier = querier;
-		this.logger = pino({ name: this.WORKER_NAME });
+		this.storer = storer;
+		this.logger = getLogger(this.WORKER_NAME);
 	}
 
 	startWorkers(workerCount: number): void {
@@ -47,6 +50,7 @@ export class QueryWorker implements Worker {
 
 	private async processJob(id: number, job: Job<SearchQuery>, publisher: Redis) {
 		try {
+			if (!job.id) return;
 			const userInput = job.data.text;
 			const transformedUserInput = await transformUserInput(this.transformer, userInput);
 			const embededUserInput = await embedUserInput(this.embeder, transformedUserInput);
@@ -59,19 +63,18 @@ export class QueryWorker implements Worker {
 		} catch (err) {
 			const errorMessage =
 				err instanceof ErrorQueryJob ? err.message : "unexpected error processing job";
-			this.logger.error({ err }, errorMessage);
+			this.logger.error({ err: err }, errorMessage);
 			throw err;
 		}
 	}
 
-	private async cacheAndPublishResults(
-		jobId: string | undefined,
-		publisher: Redis,
-		queriedProducts: Product[],
-	) {
+	private async cacheAndPublishResults(jobId: string, publisher: Redis, queriedProducts: Product[]) {
 		const jobResultsId = `results:${jobId}`;
 		const serialized = JSON.stringify(queriedProducts);
-		await publisher.set(jobResultsId, serialized, "EX", 300);
-		await publisher.publish(jobResultsId, serialized);
+		await Promise.all([
+			publisher.set(jobResultsId, serialized, "EX", 300),
+			publisher.publish(jobResultsId, serialized),
+			this.storer.upload(jobId, queriedProducts),
+		]);
 	}
 }
