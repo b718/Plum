@@ -33,7 +33,7 @@ export class ScraperWorker implements Worker {
 		this.scraper = scraper;
 		this.embeder = embeder;
 		this.querier = querier;
-		this.logger = pino({ name: this.WORKER_NAME });
+		this.logger = getLogger(this.WORKER_NAME);
 	}
 
 	startWorkers(workerCount: number): void {
@@ -59,10 +59,16 @@ export class ScraperWorker implements Worker {
 					{ connection: new Redis({ maxRetriesPerRequest: null }), lockDuration: 60000 },
 				);
 				productScrapeWorker.on("failed", (job, err) => {
-					this.logger.error(
-						{ jobId: job?.id, productUrl: job?.data.productUrl, err: err },
-						"product scrape job permanently failed",
-					);
+					const totalAttempts = job?.opts.attempts;
+					const currentAttempt = job?.attemptsMade;
+					if (currentAttempt === undefined || totalAttempts === undefined) return;
+
+					const isPermanentFailure = currentAttempt === totalAttempts;
+					const loggerMessage = isPermanentFailure
+						? "product scrape job permanently failed"
+						: `product scrape job failed, retrying attempt ${currentAttempt}/${totalAttempts}`;
+					const logFunction = isPermanentFailure ? this.logger.error : this.logger.warn;
+					logFunction({ jobId: job?.id, productUrl: job?.data.productUrl, err: err }, loggerMessage);
 				});
 			}
 
