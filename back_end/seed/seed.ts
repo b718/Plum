@@ -1,15 +1,15 @@
 import { QdrantClient } from "@qdrant/js-client-rest";
-import pino from "pino";
 
 import { VECTOR_OUTPUT_SIZE } from "../consts/embeded";
 import fixtures from "../fixtures/fixture.json";
+import { getLogger } from "../logger";
 
 function randomVector(): number[] {
 	return Array.from({ length: VECTOR_OUTPUT_SIZE }, () => Math.random());
 }
 
 async function seedDatabase() {
-	const logger = pino({ name: __filename });
+	const logger = getLogger(__filename);
 	const client = new QdrantClient({ host: "localhost", port: 6333 });
 	const COLLECTION = "products";
 
