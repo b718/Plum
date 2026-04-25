@@ -3,6 +3,7 @@ import { QdrantClient } from "@qdrant/js-client-rest";
 import { VECTOR_OUTPUT_SIZE } from "../consts/embeded";
 import fixtures from "../fixtures/fixture.json";
 import { getLogger } from "../logger";
+import { StorerPostgres } from "../modules/query-pipeline/storer/storer-postgres";
 
 function randomVector(): number[] {
 	return Array.from({ length: VECTOR_OUTPUT_SIZE }, () => Math.random());
@@ -36,6 +37,9 @@ async function seedDatabase() {
 	});
 
 	logger.info(`inserted ${fixtures.length} points`);
+
+	const storer = new StorerPostgres();
+	await storer.query("2"); // do this in seed data to try and break cold-start time
 }
 
 seedDatabase();
