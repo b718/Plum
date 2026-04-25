@@ -1,27 +1,42 @@
 import type { Context } from "hono";
 import Redis from "ioredis";
 
-export default function resultsHandler() {
+import { getLogger } from "../../logger";
+import type { Storer } from "../../modules/query-pipeline/storer/storer";
+
+const headers = {
+	"Content-Type": "text/event-stream",
+	"Cache-Control": "no-cache",
+	Connection: "keep-alive",
+};
+
+export default function resultsHandler(storer: Storer) {
+	const logger = getLogger(__filename);
 	const encoder = new TextEncoder();
 
 	return async (c: Context) => {
-		const jobId = c.req.param("jobId");
+		const jobId = c.req.param("jobId")!;
 		const channel = `results:${jobId}`;
 		const subscriber = new Redis();
+		logger.info({ jobId: jobId }, "fetching result");
 
-		const cached = await subscriber.get(channel);
-		if (cached) {
+		const cachedData = await subscriber.get(channel);
+		if (cachedData) {
 			subscriber.disconnect();
-			return new Response(encoder.encode(`data: ${cached}\n\n`), {
-				headers: {
-					"Content-Type": "text/event-stream",
-					"Cache-Control": "no-cache",
-					Connection: "keep-alive",
-				},
-			});
+			logger.info({ jobId: jobId }, "fetching result from cache");
+			return new Response(encoder.encode(`data: ${cachedData}\n\n`), { headers: headers });
 		}
 
-		const stream = new ReadableStream({
+		const persistedData = await storer.query(jobId);
+		if (persistedData.length != 0) {
+			logger.info({ jobId: jobId }, "fetching result from database");
+			const stringifiedData = JSON.stringify(persistedData);
+			await subscriber.set(channel, stringifiedData, "EX", 300);
+			subscriber.disconnect();
+			return new Response(encoder.encode(`data: ${stringifiedData}\n\n`), { headers: headers });
+		}
+
+		const dataStream = new ReadableStream({
 			start(controller) {
 				const timeout = setTimeout(() => {
 					if (controller.desiredSize) {
@@ -52,12 +67,7 @@ export default function resultsHandler() {
 			},
 		});
 
-		return new Response(stream, {
-			headers: {
-				"Content-Type": "text/event-stream",
-				"Cache-Control": "no-cache",
-				Connection: "keep-alive",
-			},
-		});
+		logger.info({ jobId: jobId }, "fetching result from data stream");
+		return new Response(dataStream, { headers: headers });
 	};
 }
