@@ -4,7 +4,7 @@ import type { GoogleGenAI as Client } from "@google/genai";
 import type { Product } from "@plum/types";
 
 import { VECTOR_OUTPUT_SIZE } from "../../consts/embeded";
-import { ErrorEmbed } from "../query-pipeline/error/error-embed";
+import { ErrorEmbeder } from "../query-pipeline/error/error-embeder";
 import type { Embeder } from "./embeder";
 
 const MODEL_NAME = "gemini-embedding-001";
@@ -27,17 +27,17 @@ export class EmbederGoogle implements Embeder {
 			});
 			const embeddings = result.embeddings;
 			if (!embeddings) {
-				throw new ErrorEmbed("embeddings are empty for user input");
+				throw new ErrorEmbeder("embeddings are empty for user input");
 			}
 
 			if (!embeddings[0]?.values) {
-				throw new ErrorEmbed("embedding's values are empty for user input");
+				throw new ErrorEmbeder("embedding's values are empty for user input");
 			}
 
 			return embeddings[0].values;
 		} catch (error) {
-			if (error instanceof ErrorEmbed) throw error;
-			throw new ErrorEmbed(error);
+			if (error instanceof ErrorEmbeder) throw error;
+			throw new ErrorEmbeder(error);
 		}
 	}
 
@@ -51,17 +51,17 @@ export class EmbederGoogle implements Embeder {
 			});
 			const embeddings = result.embeddings;
 			if (!embeddings) {
-				throw new ErrorEmbed("embeddings are empty for product data");
+				throw new ErrorEmbeder("embeddings are empty for product data");
 			}
 
 			if (!embeddings[0]?.values) {
-				throw new ErrorEmbed("embedding's values are empty for product data");
+				throw new ErrorEmbeder("embedding's values are empty for product data");
 			}
 
 			return embeddings[0].values;
 		} catch (error) {
-			if (error instanceof ErrorEmbed) throw error;
-			throw new ErrorEmbed(error);
+			if (error instanceof ErrorEmbeder) throw error;
+			throw new ErrorEmbeder(error);
 		}
 	}
 }
