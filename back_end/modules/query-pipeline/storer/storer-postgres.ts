@@ -10,11 +10,11 @@ import type { Storer } from "./storer";
 export class StorerPostgres implements Storer {
 	readonly storerType = "prisma-postgres";
 
-	private readonly prisma: PrismaClient;
+	private readonly client: PrismaClient;
 	private readonly logger: Logger;
 
 	constructor() {
-		this.prisma = new PrismaClient({
+		this.client = new PrismaClient({
 			adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL! }),
 		});
 		this.logger = getLogger("storer-postgres");
@@ -23,7 +23,7 @@ export class StorerPostgres implements Storer {
 	async upload(jobId: string, products: Product[]): Promise<void> {
 		try {
 			this.logger.info({ storerType: this.storerType, jobId }, "uploading product data");
-			await this.prisma.jobResult.upsert({
+			await this.client.jobResult.upsert({
 				where: { jobId },
 				update: { products: JSON.stringify(products) },
 				create: { jobId, products: JSON.stringify(products) },
@@ -38,12 +38,15 @@ export class StorerPostgres implements Storer {
 	async query(jobId: string): Promise<Product[]> {
 		try {
 			this.logger.info({ storerType: this.storerType, jobId }, "querying product data");
-			const result = await this.prisma.jobResult.findUnique({ where: { jobId } });
-			if (!result) throw new ErrorStorer(`no results associated with jobId:'${jobId}'`);
+			const result = await this.client.jobResult.findUnique({ where: { jobId } });
+			if (!result) throw new ErrorStorer(new Error(`no results associated with jobId:'${jobId}'`));
 			this.logger.info({ storerType: this.storerType, jobId }, "successfully queried product data");
 			return JSON.parse(result.products) as Product[];
 		} catch (err) {
-			this.logger.error({ storerType: this.storerType, jobId, err }, "failed to query for products");
+			this.logger.error(
+				{ storerType: this.storerType, jobId: jobId, err: err },
+				"failed to query for products",
+			);
 			return [];
 		}
 	}
