@@ -11,8 +11,9 @@ import {
 	QUEUE_PRODUCT_UPLOAD,
 	QUEUE_URL_SCRAPE,
 } from "../../consts/queue";
-import type { Embeder } from "../embed/embeder";
-import type { Querier } from "../query/querier";
+import { type Logger, getLogger } from "../../logger";
+import type { Embeder } from "../embeder/embeder";
+import type { Querier } from "../querier/querier";
 import { ErrorProductScrape } from "../scraper-pipeline/error/error-product-scrape";
 import { ErrorProductUpload } from "../scraper-pipeline/error/error-product-upload";
 import { ErrorUrlScrape } from "../scraper-pipeline/error/error-url-scrape";
