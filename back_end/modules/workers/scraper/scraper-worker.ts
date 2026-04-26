@@ -1,61 +1,56 @@
 import { type Job, Queue, Worker as QueueWorker } from "bullmq";
 import Redis from "ioredis";
-import pino, { type Logger } from "pino";
 
 import type { ProductScrapeJobData, ProductUploadJobData, UrlScrapeJobData } from "@plum/types";
 
-import {
-	PRODUCT_SCRAPE_JOB,
-	PRODUCT_UPLOAD_JOB,
-	QUEUE_PRODUCT_SCRAPE,
-	QUEUE_PRODUCT_UPLOAD,
-	QUEUE_URL_SCRAPE,
-} from "../../consts/queue";
-import { type Logger, getLogger } from "../../logger";
-import type { Embeder } from "../embeder/embeder";
-import type { Querier } from "../querier/querier";
-import { ErrorProductScrape } from "../scraper-pipeline/error/error-product-scrape";
-import { ErrorProductUpload } from "../scraper-pipeline/error/error-product-upload";
-import { ErrorUrlScrape } from "../scraper-pipeline/error/error-url-scrape";
-import type { Scraper } from "../scraper-pipeline/scraper/scraper";
-import type { Worker } from "./worker";
+import { PRODUCT_SCRAPE_JOB, PRODUCT_UPLOAD_JOB } from "../../../consts/queue";
+import { type Logger, getLogger } from "../../../logger";
+import type { Embeder } from "../../embeder/embeder";
+import type { Querier } from "../../querier/querier";
+import { ErrorProductScrape } from "../../scraper-pipeline/error/error-product-scrape";
+import { ErrorProductUpload } from "../../scraper-pipeline/error/error-product-upload";
+import { ErrorUrlScrape } from "../../scraper-pipeline/error/error-url-scrape";
+import type { Scraper } from "../../scraper-pipeline/scraper/scraper";
+import type { Worker } from "../worker";
 
-export class ScraperWorker implements Worker {
+export abstract class ScraperWorker implements Worker {
 	readonly workerType = "scraper";
 
-	readonly WORKER_NAME = "scraper-worker";
+	abstract readonly QUEUE_URL_SCRAPE: string;
+	abstract readonly QUEUE_PRODUCT_SCRAPE: string;
+	abstract readonly QUEUE_PRODUCT_UPLOAD: string;
 
 	private readonly scraper: Scraper;
 	private readonly embeder: Embeder;
 	private readonly querier: Querier;
 	private readonly logger: Logger;
 
-	constructor(scraper: Scraper, embeder: Embeder, querier: Querier) {
+	constructor(workerName: string, scraper: Scraper, embeder: Embeder, querier: Querier) {
 		this.scraper = scraper;
 		this.embeder = embeder;
 		this.querier = querier;
-		this.logger = getLogger(this.WORKER_NAME);
+		this.logger = getLogger(workerName);
 	}
 
 	startWorkers(workerCount: number): void {
 		try {
-			const productScrapeQueue = new Queue(QUEUE_PRODUCT_SCRAPE, {
-				connection: new Redis(),
-			});
-
-			const productUploadQueue = new Queue(QUEUE_PRODUCT_UPLOAD, {
+			const productScrapeQueue = new Queue(this.QUEUE_PRODUCT_SCRAPE, {
 				connection: new Redis(),
 			});
 
 			new QueueWorker(
-				QUEUE_URL_SCRAPE,
+				this.QUEUE_URL_SCRAPE,
 				async (job) => this.processUrlScrapeJob(1, job, productScrapeQueue),
 				{ connection: new Redis({ maxRetriesPerRequest: null }), lockDuration: 120000 },
 			);
 
+			const productUploadQueue = new Queue(this.QUEUE_PRODUCT_UPLOAD, {
+				connection: new Redis(),
+			});
+
 			for (let i = 0; i < workerCount; i++) {
 				const productScrapeWorker = new QueueWorker(
-					QUEUE_PRODUCT_SCRAPE,
+					this.QUEUE_PRODUCT_SCRAPE,
 					async (job) => this.processProductScrapeJob(i + 1, job, productUploadQueue),
 					{ connection: new Redis({ maxRetriesPerRequest: null }), lockDuration: 60000 },
 				);
@@ -75,7 +70,7 @@ export class ScraperWorker implements Worker {
 				});
 			}
 
-			new QueueWorker(QUEUE_PRODUCT_UPLOAD, async (job) => this.processProductUploadJob(1, job), {
+			new QueueWorker(this.QUEUE_PRODUCT_UPLOAD, async (job) => this.processProductUploadJob(1, job), {
 				connection: new Redis({ maxRetriesPerRequest: null }),
 			});
 		} catch (err) {
