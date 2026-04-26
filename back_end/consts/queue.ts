@@ -1,6 +1,11 @@
-export const QUEUE_URL_SCRAPE = "url-scrape-jobs";
-export const QUEUE_PRODUCT_SCRAPE = "product-scrape-jobs";
-export const QUEUE_PRODUCT_UPLOAD = "product-upload-jobs";
+export const QUEUE_URL_SCRAPE_GRAILED = "url-scrape-jobs-grailed";
+export const QUEUE_PRODUCT_SCRAPE_GRAILED = "product-scrape-jobs-grailed";
+export const QUEUE_PRODUCT_UPLOAD_GRAILED = "product-upload-jobs-grailed";
+
+export const QUEUE_URL_SCRAPE_SSENSE = "url-scrape-jobs-ssense";
+export const QUEUE_PRODUCT_SCRAPE_SSENSE = "product-scrape-jobs-ssense";
+export const QUEUE_PRODUCT_UPLOAD_SSENSE = "product-upload-jobs-ssense";
+
 export const QUEUE_SEARCH = "search-jobs";
 
 export const URL_SCRAPE_JOB = "url-scrape";
