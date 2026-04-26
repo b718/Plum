@@ -43,10 +43,7 @@ export class StorerPostgres implements Storer {
 			this.logger.info({ storerType: this.storerType, jobId }, "successfully queried product data");
 			return JSON.parse(result.products) as Product[];
 		} catch (err) {
-			this.logger.error(
-				{ storerType: this.storerType, jobId: jobId, err: err },
-				"failed to query for products",
-			);
+			this.logger.error({ storerType: this.storerType, jobId, err }, "failed to query for products");
 			return [];
 		}
 	}
