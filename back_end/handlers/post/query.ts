@@ -27,7 +27,8 @@ export default function queryHandler(queue: Queue) {
 			};
 			logger.info({ jobId: response.jobId }, "enqueued search job");
 			return c.json(response, StatusCodes.ACCEPTED);
-		} catch {
+		} catch (err) {
+			logger.error({ err }, "error occured in query handler");
 			return c.json({ error: "Internal server error" }, StatusCodes.INTERNAL_SERVER_ERROR);
 		}
 	};
