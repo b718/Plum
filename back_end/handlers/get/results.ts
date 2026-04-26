@@ -22,8 +22,8 @@ export default function resultsHandler(storer: Storer) {
 
 		const cachedData = await subscriber.get(channel);
 		if (cachedData) {
-			subscriber.disconnect();
 			logger.info({ jobId: jobId }, "fetching result from cache");
+			subscriber.disconnect();
 			return new Response(encoder.encode(`data: ${cachedData}\n\n`), { headers: headers });
 		}
 
@@ -48,6 +48,7 @@ export default function resultsHandler(storer: Storer) {
 
 				subscriber.subscribe(channel, (err) => {
 					if (err) {
+						logger.error({ err }, "error occured in results data stream");
 						controller.enqueue(encoder.encode("event: error\ndata: {}\n\n"));
 						controller.close();
 						subscriber.disconnect();
