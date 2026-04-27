@@ -12,10 +12,12 @@ interface Props {
 	loading: boolean;
 	error: string | null;
 }
+const PAGINATION_AMOUNT = 9;
 
 export default function ProductGrid({ products, query, loading, error }: Props) {
-	const PAGINATION_AMOUNT = 9;
 	const [currentPage, setCurrentPage] = useState<number>(0);
+	const currentDisplayedPage = Math.floor(currentPage / PAGINATION_AMOUNT) + 1;
+	const maxDisplayedPage = Math.ceil(products.length / PAGINATION_AMOUNT);
 
 	if (loading) {
 		return (
@@ -55,7 +57,7 @@ export default function ProductGrid({ products, query, loading, error }: Props) 
 					Previous
 				</button>
 				<span className="text-sm text-gray-600">
-					Page {Math.floor(currentPage / PAGINATION_AMOUNT) + 1} of {Math.ceil(products.length / PAGINATION_AMOUNT)}
+					Page {currentDisplayedPage} of {maxDisplayedPage}
 				</span>
 				<button
 					disabled={currentPage + PAGINATION_AMOUNT >= products.length}
