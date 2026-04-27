@@ -55,8 +55,7 @@ export default function ProductGrid({ products, query, loading, error }: Props) 
 					Previous
 				</button>
 				<span className="text-sm text-gray-600">
-					Page {Math.floor(currentPage / PAGINATION_AMOUNT) + 1} of
-					{Math.ceil(products.length / PAGINATION_AMOUNT)}
+					Page {Math.floor(currentPage / PAGINATION_AMOUNT) + 1} of {Math.ceil(products.length / PAGINATION_AMOUNT)}
 				</span>
 				<button
 					disabled={currentPage + PAGINATION_AMOUNT >= products.length}
