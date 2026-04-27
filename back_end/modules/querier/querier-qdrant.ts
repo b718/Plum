@@ -7,6 +7,7 @@ import { ErrorQuerier } from "../query-pipeline/error/error-querier";
 import type { Querier } from "./querier";
 
 const COLLECTION_NAME = "products";
+const ITEM_LIMIT = 30;
 
 export class QuerierQdrant implements Querier {
 	readonly querierType = "qdrant";
@@ -25,6 +26,7 @@ export class QuerierQdrant implements Querier {
 			const results = await this.client.search(COLLECTION_NAME, {
 				vector: embededInput,
 				with_payload: true,
+				limit: ITEM_LIMIT,
 			});
 			const products = results
 				.filter((result) => result.payload)
