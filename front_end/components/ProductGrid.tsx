@@ -4,11 +4,12 @@ import ProductCard from "./ProductCard";
 
 interface Props {
 	products: Product[];
+	query?: string;
 	loading: boolean;
 	error: string | null;
 }
 
-export default function ProductGrid({ products, loading, error }: Props) {
+export default function ProductGrid({ products, query, loading, error }: Props) {
 	if (loading) {
 		return (
 			<section className="w-full max-w-5xl flex flex-col items-center gap-3 py-16 text-gray-500">
@@ -30,6 +31,7 @@ export default function ProductGrid({ products, loading, error }: Props) {
 
 	return (
 		<section className="w-full max-w-5xl">
+			{query && <div className="text-sm mb-1">Showing results for: {query}</div>}
 			<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
 				{products.map((product) => (
 					<ProductCard key={product.id} product={product} />

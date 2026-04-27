@@ -53,7 +53,7 @@ function useSearchState() {
 				throw new Error(data.errorMessage ?? `Request failed (${res.status})`);
 			}
 			const { jobId } = await res.json();
-			router.push(`/results/${jobId}`);
+			router.push(`/results/${jobId}?q=${encodeURIComponent(text)}`);
 		} catch (err) {
 			setError(err instanceof Error ? err.message : "Something went wrong");
 		} finally {

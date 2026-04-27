@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import ChatBox from "@/components/ChatBox";
@@ -12,6 +12,7 @@ import { serverUrl } from "../../../utilities/api";
 
 export default function ResultsPage() {
 	const { resultId } = useParams<{ resultId: string }>();
+	const query = useSearchParams().get("q") ?? "";
 	const [products, setProducts] = useState<Product[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
@@ -30,7 +31,7 @@ export default function ResultsPage() {
 			eventSource.close();
 		});
 		eventSource.onerror = () => {
-			setError("Failed to fetch results.");
+			setError("Failed to fetch results. Please refresh page.");
 			setLoading(false);
 			eventSource.close();
 		};
@@ -41,7 +42,7 @@ export default function ResultsPage() {
 	return (
 		<main className="flex min-h-screen flex-col items-center gap-10 px-4 py-16">
 			<ChatBox />
-			<ProductGrid products={products} loading={loading} error={error} />
+			<ProductGrid products={products} query={query} loading={loading} error={error} />
 		</main>
 	);
 }
