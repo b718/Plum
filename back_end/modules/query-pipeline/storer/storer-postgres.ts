@@ -35,6 +35,28 @@ export class StorerPostgres implements Storer {
 		}
 	}
 
+	async uploadProduct(product: Product): Promise<void> {
+		try {
+			const { id, ...productData } = product;
+			this.logger.info({ storerType: this.storerType, productId: product.id }, "uploading product data");
+			await this.client.products.upsert({
+				where: { id: product.id },
+				update: { ...productData },
+				create: { ...product },
+			});
+			this.logger.info(
+				{ storerType: this.storerType, productId: product.id },
+				"successfully uploaded product data",
+			);
+		} catch (err) {
+			this.logger.error(
+				{ storerType: this.storerType, productId: product.id, err },
+				"failed to upload product",
+			);
+			throw new ErrorStorer(err);
+		}
+	}
+
 	async query(jobId: string): Promise<Product[]> {
 		try {
 			this.logger.info({ storerType: this.storerType, jobId }, "querying product data");
