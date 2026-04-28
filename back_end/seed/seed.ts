@@ -29,7 +29,6 @@ async function seedDatabase() {
 				name: item.name,
 				description: item.description,
 				category: item.category,
-				tag: item.tag,
 				url: item.url,
 				imageUrl: "",
 			},
@@ -39,7 +38,7 @@ async function seedDatabase() {
 	logger.info(`inserted ${fixtures.length} points`);
 
 	const storer = new StorerPostgres();
-	await storer.query("2"); // do this in seed data to try and break cold-start time
+	await storer.query("THIS IS MEANT TO FAIL");
 }
 
 seedDatabase();
