@@ -14,6 +14,20 @@ datasource db {
 
 model JobResult {
   jobId     String   @id
-  products  String
   createdAt DateTime @default(now())
+  
+  products  Products[]
+}
+
+model Products {
+  id String @id
+  productDomainId String 
+	name String
+	description String
+	category String
+	url String
+	imageUrl String
+  createdAt DateTime @default(now())
+
+  jobResult JobResult[]
 }
