@@ -3,17 +3,17 @@ import Redis from "ioredis";
 
 import type { Product, SearchQuery } from "@plum/types";
 
-import { QUEUE_SEARCH } from "../../consts/queue";
-import { type Logger, getLogger } from "../../logger";
-import type { Embeder } from "../embeder/embeder";
-import type { Querier } from "../querier/querier";
-import { embedUserInput } from "../query-pipeline/embed/embed-user-input";
-import { ErrorQueryJob } from "../query-pipeline/error/error";
-import { queryEmbededUserInput } from "../query-pipeline/query/query-database";
-import type { Storer } from "../query-pipeline/storer/storer";
-import { transformUserInput } from "../query-pipeline/transform/transform-user-input";
-import type { Transformer } from "../query-pipeline/transform/transformer";
-import type { Worker } from "./worker";
+import { QUEUE_SEARCH } from "../../../consts/queue";
+import { type Logger, getLogger } from "../../../logger";
+import type { Embeder } from "../../embeder/embeder";
+import type { Querier } from "../../querier/querier";
+import { embedUserInput } from "../../query-pipeline/embed/embed-user-input";
+import { ErrorQueryJob } from "../../query-pipeline/error/error";
+import { queryEmbededUserInput } from "../../query-pipeline/query/query-database";
+import type { Storer } from "../../query-pipeline/storer/storer";
+import { transformUserInput } from "../../query-pipeline/transform/transform-user-input";
+import type { Transformer } from "../../query-pipeline/transform/transformer";
+import type { Worker } from "../worker";
 
 export class QueryWorker implements Worker {
 	readonly workerType = "query";
