@@ -2,8 +2,12 @@
 scrape scraper domain:
     @cd ../scripts && bun scrape.ts {{scraper}} {{domain}}
 
-scrape-grailed:
+grailed:
     @just scrape::scrape "grailed" "https://www.grailed.com/collections/289"
 
-scrape-ssense:
+ssense:
     @just scrape::scrape "ssense" "https://www.ssense.com/en-ca/men/clothing"
+
+all:
+    @just scrape::grailed
+    @just scrape::ssense
