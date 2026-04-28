@@ -1,6 +1,7 @@
 import { Job, Worker as QueueWorker } from "bullmq";
 import Redis from "ioredis";
 
+import { PAGINATION_AMOUNT } from "@plum/consts";
 import type { Product, SearchQuery } from "@plum/types";
 
 import { QUEUE_SEARCH } from "../../../consts/queue";
@@ -69,11 +70,17 @@ export class QueryWorker implements Worker {
 	}
 
 	private async cacheAndPublishResults(jobId: string, publisher: Redis, queriedProducts: Product[]) {
-		const jobResultsId = `results:${jobId}`;
-		const serialized = JSON.stringify(queriedProducts);
+		const totalPages = Math.ceil(queriedProducts.length / PAGINATION_AMOUNT);
+		const pageOneKey = `results:${jobId}:1`;
+		const pageOnePayload = {
+			products: queriedProducts.slice(0, PAGINATION_AMOUNT),
+			page: 1,
+			totalPages,
+		};
+		const serialized = JSON.stringify(pageOnePayload);
 		await Promise.all([
-			publisher.set(jobResultsId, serialized, "EX", 300),
-			publisher.publish(jobResultsId, serialized),
+			publisher.set(pageOneKey, serialized, "EX", 300),
+			publisher.publish(pageOneKey, serialized),
 			this.storer.upload(jobId, queriedProducts),
 		]);
 	}
