@@ -1,5 +1,6 @@
 import { type QdrantClient as Client, QdrantClient } from "@qdrant/js-client-rest";
 
+import { ITEM_LIMIT } from "@plum/consts";
 import type { Product } from "@plum/types";
 
 import { type Logger, getLogger } from "../../logger";
@@ -7,7 +8,6 @@ import { ErrorQuerier } from "../query-pipeline/error/error-querier";
 import type { Querier } from "./querier";
 
 const COLLECTION_NAME = "products";
-const ITEM_LIMIT = 30;
 
 export class QuerierQdrant implements Querier {
 	readonly querierType = "qdrant";
