@@ -16,24 +16,25 @@ export default function resultsHandler(storer: Storer) {
 
 	return async (c: Context) => {
 		const jobId = c.req.param("jobId")!;
-		const channel = `results:${jobId}`;
+		const page = Number(c.req.query("page")!);
+		const pageKey = `results:${jobId}:${page}`;
 		const subscriber = new Redis();
-		logger.info({ jobId: jobId }, "fetching result");
+		logger.info({ jobId, page }, "fetching result");
 
-		const cachedData = await subscriber.get(channel);
+		const cachedData = await subscriber.get(pageKey);
 		if (cachedData) {
-			logger.info({ jobId: jobId }, "fetching result from cache");
+			logger.info({ jobId, page }, "fetching result from cache");
 			subscriber.disconnect();
-			return new Response(encoder.encode(`data: ${cachedData}\n\n`), { headers: headers });
+			return new Response(encoder.encode(`data: ${cachedData}\n\n`), { headers });
 		}
 
-		const persistedData = await storer.query(jobId);
-		if (persistedData.length != 0) {
-			logger.info({ jobId: jobId }, "fetching result from database");
+		const persistedData = await storer.query(jobId, page);
+		if (persistedData.products.length !== 0) {
+			logger.info({ jobId, page }, "fetching result from database");
 			const stringifiedData = JSON.stringify(persistedData);
-			await subscriber.set(channel, stringifiedData, "EX", 300);
+			await subscriber.set(pageKey, stringifiedData, "EX", 300);
 			subscriber.disconnect();
-			return new Response(encoder.encode(`data: ${stringifiedData}\n\n`), { headers: headers });
+			return new Response(encoder.encode(`data: ${stringifiedData}\n\n`), { headers });
 		}
 
 		const dataStream = new ReadableStream({
@@ -46,7 +47,8 @@ export default function resultsHandler(storer: Storer) {
 					}
 				}, 30_000);
 
-				subscriber.subscribe(channel, (err) => {
+				const jobChannel = `results:${jobId}:1`;
+				subscriber.subscribe(jobChannel, (err) => {
 					if (err) {
 						logger.error({ err }, "error occured in results data stream");
 						controller.enqueue(encoder.encode("event: error\ndata: {}\n\n"));
@@ -56,7 +58,7 @@ export default function resultsHandler(storer: Storer) {
 					}
 				});
 
-				subscriber.on("message", (_, message) => {
+				subscriber.on("message", async (_, message) => {
 					controller.enqueue(encoder.encode(`data: ${message}\n\n`));
 					controller.close();
 					subscriber.disconnect();
@@ -68,7 +70,7 @@ export default function resultsHandler(storer: Storer) {
 			},
 		});
 
-		logger.info({ jobId: jobId }, "fetching result from data stream");
-		return new Response(dataStream, { headers: headers });
+		logger.info({ jobId, page }, "fetching result from data stream");
+		return new Response(dataStream, { headers });
 	};
 }
