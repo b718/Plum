@@ -7,6 +7,7 @@ import { PRODUCT_SCRAPE_JOB, PRODUCT_UPLOAD_JOB } from "../../../consts/queue";
 import { type Logger, getLogger } from "../../../logger";
 import type { Embeder } from "../../embeder/embeder";
 import type { Querier } from "../../querier/querier";
+import type { Storer } from "../../query-pipeline/storer/storer";
 import { ErrorProductScrape } from "../../scraper-pipeline/error/error-product-scrape";
 import { ErrorProductUpload } from "../../scraper-pipeline/error/error-product-upload";
 import { ErrorUrlScrape } from "../../scraper-pipeline/error/error-url-scrape";
@@ -23,12 +24,14 @@ export abstract class ScraperWorker implements Worker {
 	private readonly scraper: Scraper;
 	private readonly embeder: Embeder;
 	private readonly querier: Querier;
+	private readonly storer: Storer;
 	private readonly logger: Logger;
 
-	constructor(workerName: string, scraper: Scraper, embeder: Embeder, querier: Querier) {
+	constructor(workerName: string, scraper: Scraper, embeder: Embeder, querier: Querier, storer: Storer) {
 		this.scraper = scraper;
 		this.embeder = embeder;
 		this.querier = querier;
+		this.storer = storer;
 		this.logger = getLogger(workerName);
 	}
 
@@ -134,7 +137,10 @@ export abstract class ScraperWorker implements Worker {
 	private async processProductUploadJob(id: number, job: Job<ProductUploadJobData>): Promise<void> {
 		try {
 			const embededProductData = await this.embeder.embedProductData(job.data.product);
-			await this.querier.upload(embededProductData, job.data.product);
+			await Promise.all([
+				this.querier.upload(embededProductData, job.data.product),
+				this.storer.uploadProduct(job.data.product),
+			]);
 			this.logger.info(
 				{ workerId: id, productId: job.data.product.id },
 				"product data uploaded successfully",
