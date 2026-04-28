@@ -67,7 +67,7 @@ export class ScraperGrailed extends Scraper {
 
 		const product: Product = {
 			id: randomUUIDv7(),
-			productDomainId: productDomainId,
+			productDomainId: String(productDomainId),
 			description: extractedProductDescrption ?? "",
 			category: "clothing",
 			name: extractedProductData.name ?? "",

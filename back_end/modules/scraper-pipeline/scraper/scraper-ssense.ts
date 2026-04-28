@@ -37,7 +37,7 @@ export class ScraperSsense extends Scraper {
 	private createProductData(extractedProductData: Record<string, string | undefined>): Product | null {
 		const product: Product = {
 			id: randomUUIDv7(),
-			productDomainId: extractedProductData.productID ?? "",
+			productDomainId: String(extractedProductData.productID) ?? "",
 			description: extractedProductData.description ?? "",
 			category: "clothing",
 			name: extractedProductData.name ?? "",
