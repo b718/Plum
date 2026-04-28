@@ -25,9 +25,18 @@ export class StorerPostgres implements Storer {
 			this.logger.info({ storerType: this.storerType, jobId }, "uploading product data");
 			await this.client.jobResult.upsert({
 				where: { jobId },
-				update: { products: JSON.stringify(products) },
-				create: { jobId, products: JSON.stringify(products) },
+				update: { jobId },
+				create: { jobId },
 			});
+			await Promise.allSettled(
+				products.map((product) =>
+					this.client.products.upsert({
+						where: { id: product.id },
+						update: { jobResult: { connect: { jobId: jobId } } },
+						create: { ...product, jobResult: { connect: { jobId: jobId } } },
+					}),
+				),
+			);
 			this.logger.info({ storerType: this.storerType, jobId }, "successfully uploaded product data");
 		} catch (err) {
 			this.logger.error({ storerType: this.storerType, jobId, err }, "failed to upload products");
@@ -60,10 +69,16 @@ export class StorerPostgres implements Storer {
 	async query(jobId: string): Promise<Product[]> {
 		try {
 			this.logger.info({ storerType: this.storerType, jobId }, "querying product data");
-			const result = await this.client.jobResult.findUnique({ where: { jobId } });
+			const result = await this.client.jobResult.findUnique({
+				where: { jobId: jobId },
+				include: { products: true },
+			});
 			if (!result) throw new ErrorStorer(new Error(`no results associated with jobId:'${jobId}'`));
-			this.logger.info({ storerType: this.storerType, jobId }, "successfully queried product data");
-			return JSON.parse(result.products) as Product[];
+			this.logger.info(
+				{ storerType: this.storerType, count: result.products.length, jobId },
+				"successfully queried product data",
+			);
+			return result.products as Product[];
 		} catch (err) {
 			this.logger.error({ storerType: this.storerType, jobId, err }, "failed to query for products");
 			return [];
