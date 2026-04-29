@@ -6,10 +6,4 @@ To install dependencies:
 bun install
 ```
 
-To run:
-
-```bash
-bun run index.ts
-```
-
-This project was created using `bun init` in bun v1.3.12. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
+Be sure to also create a `.env` file with the necessary data. ie `GEMINI_API_KEY`, `DATABASE_URL` and `ENV`.
