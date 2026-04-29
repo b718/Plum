@@ -2,6 +2,11 @@
 
 The future of commerce is going to be led by natural language and I wanted to see what that is like.Plum is my attempt to dig into that space. Rather than navigating menus and filters, users can describe what they're looking for naturally, and the system uses a combination of LLMs and vector search to interpret that intent and surface the right results. The goal was to understand how far you can push natural language as the primary interface for a commerce-like experience. The project is still in-progress but I wanted to share my current progress.
 
+## Demo Video
+
+<video src="./assets/plum_demo.mov" controls="controls" style="max-width: 730px;">
+</video>
+
 ## Architecture
 
 ```mermaid
