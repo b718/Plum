@@ -4,15 +4,16 @@ The future of commerce is going to be led by natural language and I wanted to se
 
 ## Demo Video
 
-<video src="./assets/plum_demo.mov" controls="controls" style="max-width: 730px;">
-</video>
+<video src="https://github.com/user-attachments/assets/7eb152da-42a7-4177-9be6-287dfaddc5bc" controls style="max-width: 730px;"></video>
 
 ## Architecture
 
 ```mermaid
 %%{init: {'theme': 'base' } }%%
 flowchart TD
-    FrontEnd[Front-End] <--> BackEnd[Back-End]
+    subgraph User Flow
+        FrontEnd[Front-End] <--> BackEnd[Back-End]
+    end
 
     BackEnd <--> Cache[Cache]
     BackEnd <--> QueryQueue[Query Queue]
