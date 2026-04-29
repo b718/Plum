@@ -9,7 +9,7 @@ The future of commerce is going to be led by natural language and I wanted to se
 ## Architecture
 
 ```mermaid
-%%{init: {'theme': 'base' } }%%
+%%{init: {'theme': 'dark'} }%%
 flowchart TD
     subgraph User Flow
         FrontEnd[Front-End] <--> BackEnd[Back-End]
