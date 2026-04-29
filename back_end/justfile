@@ -12,6 +12,7 @@ set-up-local-dev:
     @just database::start-database
     @just cache::start-cache
     @just postgres::start-postgres
+    @bunx --bun prisma generate
     @sleep 1
     @bun ./seed/seed.ts
     @just scrape::all
