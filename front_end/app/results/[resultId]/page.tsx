@@ -33,16 +33,16 @@ export default function ResultsPage() {
 			setLoading(false);
 			eventSource.close();
 		};
-		eventSource.addEventListener("timeout", () => {
-			setError("Search timed out — please try again.");
-			setLoading(false);
-			eventSource.close();
-		});
 		eventSource.onerror = () => {
-			setError("Failed to fetch results. Please refresh page.");
+			setError("Failed to fetch results. Please try a new query.");
 			setLoading(false);
 			eventSource.close();
 		};
+		eventSource.addEventListener("timeout", () => {
+			setError("Search timed out. Please refresh the page.");
+			setLoading(false);
+			eventSource.close();
+		});
 
 		return () => eventSource.close();
 	}, [resultId, page]);
