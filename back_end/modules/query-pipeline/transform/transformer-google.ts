@@ -1,28 +1,46 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import type { GenerativeModel as Client } from "@google/generative-ai";
+import { GoogleGenerativeAI, GoogleGenerativeAIFetchError } from "@google/generative-ai";
+import type { Logger } from "pino";
 
+import { getLogger } from "../../../logger";
 import { ErrorTransform } from "../error/error-transform";
+import config from "./config/transformer-google-config.json";
 import type { Transformer } from "./transformer";
-
-const MODEL_NAME = "gemini-3.1-flash-lite-preview";
 
 export class TransformerGoogle implements Transformer {
 	readonly transformerType = "gemini";
 
-	private client: Client;
+	private client: GoogleGenerativeAI;
+	private readonly logger: Logger;
 
 	constructor() {
-		this.client = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!).getGenerativeModel({
-			model: MODEL_NAME,
-		});
+		if (config.models.length === 0) throw new Error("models config is empty");
+		this.client = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+		this.logger = getLogger(__filename);
 	}
 
 	async transformUserInput(userInput: string): Promise<string> {
+		const retryableStatusCodes = new Set(config.retryableStatusCodes);
 		try {
-			const transformedUserInput = await this.client.generateContent(this.createPrompt(userInput));
-			return transformedUserInput.response.text().trim();
-		} catch (error) {
-			throw new ErrorTransform(error);
+			for (const model of config.models) {
+				try {
+					const result = await this.client
+						.getGenerativeModel({ model: model.name })
+						.generateContent(this.createPrompt(userInput));
+					this.logger.info({ model: model.name }, "successfully transformed user input");
+					return result.response.text().trim();
+				} catch (err) {
+					if (
+						!(err instanceof GoogleGenerativeAIFetchError) ||
+						!err.status ||
+						!retryableStatusCodes.has(err.status)
+					)
+						throw err;
+					this.logger.warn({ model: model.name, err }, "retryable error, falling back to next model");
+				}
+			}
+			throw new Error("user input was unable to be transformed");
+		} catch (err) {
+			throw new ErrorTransform(err);
 		}
 	}
 
