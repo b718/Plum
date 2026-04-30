@@ -60,7 +60,10 @@ export class QueryWorker implements Worker {
 				{ worker: id, jobId: job.id, resultCount: queriedProducts.length },
 				"job processed",
 			);
-			await this.cacheAndPublishResults(job.id, publisher, queriedProducts);
+			await Promise.all([
+				this.uploadProducts(job.id, queriedProducts),
+				this.cacheAndPublishResults(job.id, publisher, queriedProducts),
+			]);
 		} catch (err) {
 			const errorMessage =
 				err instanceof ErrorQueryJob ? err.message : "unexpected error processing job";
@@ -81,7 +84,10 @@ export class QueryWorker implements Worker {
 		await Promise.all([
 			publisher.set(pageOneKey, serialized, "EX", 300),
 			publisher.publish(pageOneKey, serialized),
-			this.storer.upload(jobId, queriedProducts),
 		]);
+	}
+
+	private async uploadProducts(jobId: string, queriedProducts: Product[]) {
+		await this.storer.upload(jobId, queriedProducts);
 	}
 }
