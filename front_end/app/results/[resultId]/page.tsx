@@ -34,7 +34,7 @@ export default function ResultsPage() {
 			eventSource.close();
 		};
 		eventSource.onerror = () => {
-			setError("Failed to fetch results. Please try a new query.");
+			setError("Something went wrong. Please try a new search.");
 			setLoading(false);
 			eventSource.close();
 		};
