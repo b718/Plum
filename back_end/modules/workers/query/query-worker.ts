@@ -11,11 +11,24 @@ import type { Querier } from "../../querier/querier";
 import { embedUserInput } from "../../query-pipeline/embed/embed-user-input";
 import { ErrorQueryJob } from "../../query-pipeline/error/error";
 import { queryEmbededUserInput } from "../../query-pipeline/query/query-database";
-import type { Storer } from "../../query-pipeline/storer/storer";
 import { transformUserInput } from "../../query-pipeline/transform/transform-user-input";
 import type { Transformer } from "../../query-pipeline/transform/transformer";
+import type { Storer } from "../../storer/storer";
 import type { Worker } from "../worker";
 
+/**
+ * Worker that handles search queries submitted by users.
+ *
+ * Executes the following pipeline:
+ * 1. Transform the input query.
+ * 2. Embed the transformed input.
+ * 3. Query the vector store for semantically similar products.
+ * 4. Upload the matched products.
+ * 5. Publish/cache the results to the Redis channel.
+ *
+ * The results are later forwarded to the `results` handler, which serves
+ * semantically similar products to the user based on their search query.
+ */
 export class QueryWorker implements Worker {
 	readonly workerType = "query";
 

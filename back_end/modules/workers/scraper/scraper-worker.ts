@@ -7,13 +7,25 @@ import { PRODUCT_SCRAPE_JOB, PRODUCT_UPLOAD_JOB } from "../../../consts/queue";
 import { type Logger, getLogger } from "../../../logger";
 import type { Embeder } from "../../embeder/embeder";
 import type { Querier } from "../../querier/querier";
-import type { Storer } from "../../query-pipeline/storer/storer";
 import { ErrorProductScrape } from "../../scraper-pipeline/error/error-product-scrape";
 import { ErrorProductUpload } from "../../scraper-pipeline/error/error-product-upload";
 import { ErrorUrlScrape } from "../../scraper-pipeline/error/error-url-scrape";
 import type { Scraper } from "../../scraper-pipeline/scraper/scraper";
+import type { Storer } from "../../storer/storer";
 import type { Worker } from "../worker";
 
+/**
+ * Abstract worker that scrapes and indexes products from a domain.
+ *
+ * Executes the following pipeline:
+ * 1. Scrape product URLs from the target domain.
+ * 2. Scrape product data for each URL.
+ * 3. Embed the scraped product data.
+ * 4. Upload the embedded data to the vector store.
+ * 5. Upload the product data to the Postgres database.
+ *
+ * The indexed data is later consumed by the query-worker to serve search results.
+ */
 export abstract class ScraperWorker implements Worker {
 	readonly workerType = "scraper";
 
