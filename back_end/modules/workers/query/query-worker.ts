@@ -67,7 +67,7 @@ export class QueryWorker implements Worker {
 		} catch (err) {
 			const errorMessage =
 				err instanceof ErrorQueryJob ? err.message : "unexpected error processing job";
-			this.logger.error({ err: err }, errorMessage);
+			this.logger.error({ jobId: job.id, err }, errorMessage);
 			throw err;
 		}
 	}
