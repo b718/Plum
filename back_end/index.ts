@@ -40,7 +40,7 @@ function main() {
 
 	// Endpoints
 	server.get("/products", productsHandler);
-	server.get("/results/:jobId", resultsHandler(storer));
+	server.get("/results/:jobId", resultsHandler(storer, queue));
 	server.post("/query", queryHandler(queue));
 
 	logger.info(`Server starting at port: ${serverPort}`);
