@@ -3,7 +3,7 @@ import type { Context } from "hono";
 import Redis from "ioredis";
 
 import { getLogger } from "../../logger";
-import type { Storer } from "../../modules/query-pipeline/storer/storer";
+import type { Storer } from "../../modules/storer/storer";
 
 const headers = {
 	"Content-Type": "text/event-stream",

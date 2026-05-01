@@ -5,8 +5,8 @@ import {
 } from "../../../consts/queue";
 import type { Embeder } from "../../embeder/embeder";
 import type { Querier } from "../../querier/querier";
-import type { Storer } from "../../query-pipeline/storer/storer";
 import { ScraperGrailed } from "../../scraper-pipeline/scraper/scraper-grailed";
+import type { Storer } from "../../storer/storer";
 import { ScraperWorker } from "./scraper-worker";
 
 export class ScraperWorkerGrailed extends ScraperWorker {
